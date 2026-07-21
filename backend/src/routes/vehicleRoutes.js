@@ -6,9 +6,11 @@ const authMiddleware = require("../middleware/authMiddleware");
 
 const {
   addVehicle,
+  getVehicles,
 } = require("../controllers/vehicleController");
 
-// Protected Route
 router.post("/", authMiddleware, addVehicle);
+
+router.get("/", authMiddleware, getVehicles);
 
 module.exports = router;
