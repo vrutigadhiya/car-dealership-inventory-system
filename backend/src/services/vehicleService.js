@@ -32,10 +32,30 @@ const deleteVehicle = async (id) => {
   return await Vehicle.findByIdAndDelete(id);
 };
 
+// Purchase Vehicle
+const purchaseVehicle = async (id) => {
+  const vehicle = await Vehicle.findById(id);
+
+  if (!vehicle) {
+    return null;
+  }
+
+  if (vehicle.quantity <= 0) {
+    throw new Error("Vehicle is out of stock");
+  }
+
+  vehicle.quantity -= 1;
+
+  await vehicle.save();
+
+  return vehicle;
+};
+
 module.exports = {
   createVehicle,
   getAllVehicles,
   searchVehicles,
   updateVehicle,
   deleteVehicle,
+  purchaseVehicle,
 };

@@ -60,6 +60,7 @@ describe("Vehicle API", () => {
     });
   });
 
+  // Fetch Vehicle
   describe("GET /api/vehicles", () => {
     it("should return all vehicles", async () => {
       await Vehicle.create({
@@ -90,6 +91,7 @@ describe("Vehicle API", () => {
     });
   });
 
+  // Search Vehicle
   describe("GET /api/vehicles/search", () => {
     it("should search vehicles by make", async () => {
       await Vehicle.create({
@@ -119,6 +121,7 @@ describe("Vehicle API", () => {
     });
   });
 
+  // Update Vehicle
   describe("PUT /api/vehicles/:id", () => {
     it("should update a vehicle", async () => {
       const vehicle = await Vehicle.create({
@@ -147,6 +150,7 @@ describe("Vehicle API", () => {
     });
   });
 
+  // Delete
   describe("DELETE /api/vehicles/:id", () => {
     it("should delete a vehicle", async () => {
       const vehicle = await Vehicle.create({
@@ -166,6 +170,31 @@ describe("Vehicle API", () => {
       expect(res.body.success).toBe(true);
 
       expect(res.body.message).toBe("Vehicle deleted successfully");
+    });
+  });
+
+  // Purchase
+  describe("POST /api/vehicles/:id/purchase", () => {
+    it("should purchase a vehicle and decrease quantity", async () => {
+      const vehicle = await Vehicle.create({
+        make: "Toyota",
+        model: "Fortuner",
+        category: "SUV",
+        price: 4500000,
+        quantity: 5,
+      });
+
+      const res = await request(app)
+        .post(`/api/vehicles/${vehicle._id}/purchase`)
+        .set("Authorization", `Bearer ${token}`);
+
+      expect(res.statusCode).toBe(200);
+
+      expect(res.body.success).toBe(true);
+
+      expect(res.body.message).toBe("Vehicle purchased successfully");
+
+      expect(res.body.vehicle.quantity).toBe(4);
     });
   });
 });

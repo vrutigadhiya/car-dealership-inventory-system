@@ -12,12 +12,25 @@ const {
   searchVehicle,
   updateVehicleById,
   deleteVehicleById,
+  purchaseVehicleById,
 } = require("../controllers/vehicleController");
 
 router.post("/", authMiddleware, addVehicle);
 router.get("/", authMiddleware, getVehicles);
 router.get("/search", authMiddleware, searchVehicle);
 router.put("/:id", authMiddleware, validateObjectId, updateVehicleById);
-router.delete("/:id", authMiddleware, adminMiddleware, validateObjectId, deleteVehicleById);
+router.delete(
+  "/:id",
+  authMiddleware,
+  adminMiddleware,
+  validateObjectId,
+  deleteVehicleById,
+);
+router.post(
+  "/:id/purchase",
+  authMiddleware,
+  validateObjectId,
+  purchaseVehicleById,
+);
 
 module.exports = router;
