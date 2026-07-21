@@ -1,18 +1,17 @@
 const Vehicle = require("../models/Vehicle");
 const buildVehicleFilter = require("../utils/buildVehicleFilter");
 
-
-// Create Vechicle Card
+// Create Vehicle
 const createVehicle = async (vehicleData) => {
   return await Vehicle.create(vehicleData);
 };
 
-// Get Vehicle
+// Get All Vehicles
 const getAllVehicles = async () => {
   return await Vehicle.find();
 };
 
-// Search Vechicle
+// Search Vehicles
 const searchVehicles = async (query) => {
   const filter = buildVehicleFilter(query);
   return await Vehicle.find(filter);
@@ -20,14 +19,12 @@ const searchVehicles = async (query) => {
 
 // Update Vehicle
 const updateVehicle = async (id, vehicleData) => {
-  return await Vehicle.findByIdAndUpdate(
-    id,
-    vehicleData,
-    {
-      new: true,
-      runValidators: true,
-    }
-  );
+  const options = {
+    new: true,
+    runValidators: true,
+  };
+
+  return Vehicle.findByIdAndUpdate(id, vehicleData, options);
 };
 
 module.exports = {
