@@ -1,14 +1,16 @@
+const mongoose = require("mongoose");
+
 const {
   createVehicle,
   getAllVehicles,
   searchVehicles,
   updateVehicle,
+  deleteVehicle,
 } = require("../services/vehicleService");
 
 // Add Vehicle
 const addVehicle = async (req, res, next) => {
   try {
-
     const vehicle = await createVehicle(req.body);
 
     res.status(201).json({
@@ -16,7 +18,6 @@ const addVehicle = async (req, res, next) => {
       message: "Vehicle added successfully",
       vehicle,
     });
-
   } catch (error) {
     next(error);
   }
@@ -25,14 +26,12 @@ const addVehicle = async (req, res, next) => {
 // Get All Vehicles
 const getVehicles = async (req, res, next) => {
   try {
-
     const vehicles = await getAllVehicles();
 
     res.status(200).json({
       success: true,
       vehicles,
     });
-
   } catch (error) {
     next(error);
   }
@@ -40,14 +39,12 @@ const getVehicles = async (req, res, next) => {
 
 const searchVehicle = async (req, res, next) => {
   try {
-
     const vehicles = await searchVehicles(req.query);
 
     res.status(200).json({
       success: true,
       vehicles,
     });
-
   } catch (error) {
     next(error);
   }
@@ -56,11 +53,7 @@ const searchVehicle = async (req, res, next) => {
 // Update Vehicle
 const updateVehicleById = async (req, res, next) => {
   try {
-
-    const vehicle = await updateVehicle(
-      req.params.id,
-      req.body
-    );
+    const vehicle = await updateVehicle(req.params.id, req.body);
 
     if (!vehicle) {
       return res.status(404).json({
@@ -74,7 +67,36 @@ const updateVehicleById = async (req, res, next) => {
       message: "Vehicle updated successfully",
       vehicle,
     });
+  } catch (error) {
+    next(error);
+  }
+};
 
+// Delete Vehicle
+const deleteVehicleById = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid vehicle ID format",
+      });
+    }
+
+    const vehicle = await deleteVehicle(id);
+
+    if (!vehicle) {
+      return res.status(404).json({
+        success: false,
+        message: "Vehicle not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Vehicle deleted successfully",
+    });
   } catch (error) {
     next(error);
   }
@@ -85,4 +107,5 @@ module.exports = {
   getVehicles,
   searchVehicle,
   updateVehicleById,
+  deleteVehicleById,
 };

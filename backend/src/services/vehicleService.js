@@ -27,9 +27,15 @@ const updateVehicle = async (id, vehicleData) => {
   return Vehicle.findByIdAndUpdate(id, vehicleData, options);
 };
 
+// Delete Vehicle
+const deleteVehicle = async (id) => {
+  return await Vehicle.findByIdAndDelete(id);
+};
+
 module.exports = {
   createVehicle,
   getAllVehicles,
   searchVehicles,
   updateVehicle,
+  deleteVehicle,
 };

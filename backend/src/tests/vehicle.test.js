@@ -23,6 +23,7 @@ describe("Vehicle API", () => {
       name: "Admin",
       email: "admin@test.com",
       password: "Password@123",
+      role: "admin",
     });
 
     // Login
