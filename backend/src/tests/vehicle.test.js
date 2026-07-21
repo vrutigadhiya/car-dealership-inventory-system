@@ -117,4 +117,32 @@ describe("Vehicle API", () => {
       expect(res.body.vehicles[0].make).toBe("Toyota");
     });
   });
+
+  describe("PUT /api/vehicles/:id", () => {
+    it("should update a vehicle", async () => {
+      const vehicle = await Vehicle.create({
+        make: "Toyota",
+        model: "Fortuner",
+        category: "SUV",
+        price: 4500000,
+        quantity: 5,
+      });
+
+      const res = await request(app)
+        .put(`/api/vehicles/${vehicle._id}`)
+        .set("Authorization", `Bearer ${token}`)
+        .send({
+          make: "Toyota",
+          model: "Fortuner Legender",
+          category: "SUV",
+          price: 4800000,
+          quantity: 10,
+        });
+
+      expect(res.statusCode).toBe(200);
+      expect(res.body.success).toBe(true);
+      expect(res.body.vehicle.model).toBe("Fortuner Legender");
+      expect(res.body.vehicle.price).toBe(4800000);
+    });
+  });
 });
