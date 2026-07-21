@@ -22,9 +22,9 @@ const searchVehicles = async (query) => {
 // Update Vehicle
 const updateVehicle = async (id, vehicleData) => {
   const options = {
-    new: true,
-    runValidators: true,
-  };
+  returnDocument: "after",
+  runValidators: true,
+};
 
   return Vehicle.findByIdAndUpdate(id, vehicleData, options);
 };
