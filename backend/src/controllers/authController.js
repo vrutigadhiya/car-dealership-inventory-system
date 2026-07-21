@@ -1,7 +1,7 @@
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const { validationResult } = require("express-validator");
-
+const jwt = require("jsonwebtoken");
 
 const registerUser = async (req, res, next) => {
 
@@ -16,9 +16,7 @@ const registerUser = async (req, res, next) => {
       });
     }
 
-
     const { name, email, password } = req.body;
-
 
     const existingUser = await User.findOne({ email });
 
@@ -29,16 +27,13 @@ const registerUser = async (req, res, next) => {
       });
     }
 
-
     const hashedPassword = await bcrypt.hash(password, 10);
-
 
     const user = await User.create({
       name,
       email,
       password: hashedPassword,
     });
-
 
     res.status(201).json({
       success: true,
@@ -50,15 +45,74 @@ const registerUser = async (req, res, next) => {
       },
     });
 
-
   } catch (error) {
-
     next(error);
-
   }
 };
 
+const loginUser = async (req, res, next) => {
+  try {
+
+    const { email, password } = req.body;
+
+    // Find user
+    const user = await User.findOne({ email });
+
+    if (!user) {
+
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+
+    }
+
+    // Compare password
+    const isPasswordValid = await bcrypt.compare(
+      password,
+      user.password
+    );
+
+    if (!isPasswordValid) {
+
+      return res.status(401).json({
+        success: false,
+        message: "Invalid password",
+      });
+
+    }
+
+    // Generate JWT token
+    const token = jwt.sign(
+      {
+        id: user._id,
+        role: user.role,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "1d",
+      }
+    );
+
+    res.status(200).json({
+
+      success: true,
+      message: "Login successful",
+      token,
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+      }
+
+    });
+
+  } catch (error) {
+    next(error);
+  }
+
+};
 
 module.exports = {
-  registerUser,
+  registerUser, loginUser
 };
