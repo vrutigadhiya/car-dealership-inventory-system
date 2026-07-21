@@ -1,6 +1,7 @@
 const Vehicle = require("../models/Vehicle");
 const buildVehicleFilter = require("../utils/buildVehicleFilter");
 const checkVehicleStock = require("../utils/checkVehicleStock");
+const updateVehicleQuantity = require("../utils/updateVehicleQuantity");
 
 // Create Vehicle
 const createVehicle = async (vehicleData) => {
@@ -43,7 +44,7 @@ const purchaseVehicle = async (id) => {
 
   checkVehicleStock(vehicle);
 
-  vehicle.quantity -= 1;
+  updateVehicleQuantity(vehicle, -1);
 
   await vehicle.save();
 
@@ -58,7 +59,7 @@ const restockVehicle = async (id, quantity) => {
     return null;
   }
 
-  vehicle.quantity += quantity;
+  updateVehicleQuantity(vehicle, quantity);
 
   await vehicle.save();
 
