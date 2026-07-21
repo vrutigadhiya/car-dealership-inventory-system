@@ -1,6 +1,7 @@
 const {
   createVehicle,
   getAllVehicles,
+  searchVehicles,
 } = require("../services/vehicleService");
 
 // Add Vehicle
@@ -36,7 +37,23 @@ const getVehicles = async (req, res, next) => {
   }
 };
 
+const searchVehicle = async (req, res, next) => {
+  try {
+
+    const vehicles = await searchVehicles(req.query);
+
+    res.status(200).json({
+      success: true,
+      vehicles,
+    });
+
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   addVehicle,
   getVehicles,
+  searchVehicle,
 };
