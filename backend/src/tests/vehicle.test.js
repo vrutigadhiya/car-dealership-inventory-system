@@ -88,4 +88,33 @@ describe("Vehicle API", () => {
       expect(res.body.vehicles.length).toBe(2);
     });
   });
+
+  describe("GET /api/vehicles/search", () => {
+    it("should search vehicles by make", async () => {
+      await Vehicle.create({
+        make: "Toyota",
+        model: "Fortuner",
+        category: "SUV",
+        price: 4500000,
+        quantity: 5,
+      });
+
+      await Vehicle.create({
+        make: "Honda",
+        model: "City",
+        category: "Sedan",
+        price: 1500000,
+        quantity: 8,
+      });
+
+      const res = await request(app)
+        .get("/api/vehicles/search?make=Toyota")
+        .set("Authorization", `Bearer ${token}`);
+
+      expect(res.statusCode).toBe(200);
+      expect(res.body.success).toBe(true);
+      expect(res.body.vehicles.length).toBe(1);
+      expect(res.body.vehicles[0].make).toBe("Toyota");
+    });
+  });
 });
