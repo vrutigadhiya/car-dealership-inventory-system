@@ -4,9 +4,7 @@ const { validationResult } = require("express-validator");
 const generateToken = require("../utils/generateToken");
 
 const registerUser = async (req, res, next) => {
-
   try {
-
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
@@ -16,7 +14,7 @@ const registerUser = async (req, res, next) => {
       });
     }
 
-    const { name, email, password } = req.body;
+    const { name, email, password, role } = req.body;
 
     const existingUser = await User.findOne({ email });
 
@@ -33,6 +31,7 @@ const registerUser = async (req, res, next) => {
       name,
       email,
       password: hashedPassword,
+      role: role || "user",
     });
 
     res.status(201).json({
@@ -44,7 +43,6 @@ const registerUser = async (req, res, next) => {
         email: user.email,
       },
     });
-
   } catch (error) {
     next(error);
   }
@@ -52,41 +50,32 @@ const registerUser = async (req, res, next) => {
 
 const loginUser = async (req, res, next) => {
   try {
-
     const { email, password } = req.body;
 
     // Find user
     const user = await User.findOne({ email });
 
     if (!user) {
-
       return res.status(404).json({
         success: false,
         message: "User not found",
       });
-
     }
 
     // Compare password
-    const isPasswordValid = await bcrypt.compare(
-      password,
-      user.password
-    );
+    const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
-
       return res.status(401).json({
         success: false,
         message: "Invalid password",
       });
-
     }
 
     // Generate JWT token
     const token = generateToken(user);
 
     res.status(200).json({
-
       success: true,
       message: "Login successful",
       token,
@@ -94,17 +83,14 @@ const loginUser = async (req, res, next) => {
         _id: user._id,
         name: user.name,
         email: user.email,
-      }
-
+      },
     });
-
   } catch (error) {
     next(error);
-
   }
-
 };
 
 module.exports = {
-  registerUser, loginUser
+  registerUser,
+  loginUser,
 };
