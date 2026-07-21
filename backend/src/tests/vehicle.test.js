@@ -145,4 +145,26 @@ describe("Vehicle API", () => {
       expect(res.body.vehicle.price).toBe(4800000);
     });
   });
+
+  describe("DELETE /api/vehicles/:id", () => {
+    it("should delete a vehicle", async () => {
+      const vehicle = await Vehicle.create({
+        make: "Toyota",
+        model: "Fortuner",
+        category: "SUV",
+        price: 4500000,
+        quantity: 5,
+      });
+
+      const res = await request(app)
+        .delete(`/api/vehicles/${vehicle._id}`)
+        .set("Authorization", `Bearer ${token}`);
+
+      expect(res.statusCode).toBe(200);
+
+      expect(res.body.success).toBe(true);
+
+      expect(res.body.message).toBe("Vehicle deleted successfully");
+    });
+  });
 });
