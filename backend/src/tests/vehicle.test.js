@@ -197,4 +197,79 @@ describe("Vehicle API", () => {
       expect(res.body.vehicle.quantity).toBe(4);
     });
   });
+
+  // Restock Vehicle
+  describe("POST /api/vehicles/:id/restock", () => {
+    it("should restock a vehicle", async () => {
+      const vehicle = await Vehicle.create({
+        make: "Toyota",
+        model: "Fortuner",
+        category: "SUV",
+        price: 4500000,
+        quantity: 2,
+      });
+
+      const res = await request(app)
+        .post(`/api/vehicles/${vehicle._id}/restock`)
+        .set("Authorization", `Bearer ${token}`)
+        .send({
+          quantity: 5,
+        });
+
+      expect(res.statusCode).toBe(200);
+      expect(res.body.success).toBe(true);
+      expect(res.body.message).toBe("Vehicle restocked successfully");
+      expect(res.body.vehicle.quantity).toBe(7);
+    });
+
+    it("should return 404 if vehicle is not found", async () => {
+      const fakeId = new mongoose.Types.ObjectId();
+
+      const res = await request(app)
+        .post(`/api/vehicles/${fakeId}/restock`)
+        .set("Authorization", `Bearer ${token}`)
+        .send({
+          quantity: 5,
+        });
+
+      expect(res.statusCode).toBe(404);
+      expect(res.body.success).toBe(false);
+      expect(res.body.message).toBe("Vehicle not found");
+    });
+
+    it("should return 403 for non-admin user", async () => {
+      await request(app).post("/api/auth/register").send({
+        name: "User",
+        email: "user@test.com",
+        password: "Password@123",
+        role: "user",
+      });
+
+      const loginRes = await request(app).post("/api/auth/login").send({
+        email: "user@test.com",
+        password: "Password@123",
+      });
+
+      const userToken = loginRes.body.token;
+
+      const vehicle = await Vehicle.create({
+        make: "BMW",
+        model: "X5",
+        category: "SUV",
+        price: 7000000,
+        quantity: 5,
+      });
+
+      const res = await request(app)
+        .post(`/api/vehicles/${vehicle._id}/restock`)
+        .set("Authorization", `Bearer ${userToken}`)
+        .send({
+          quantity: 5,
+        });
+
+      expect(res.statusCode).toBe(403);
+      expect(res.body.success).toBe(false);
+      expect(res.body.message).toBe("Access denied. Admins only.");
+    });
+  });
 });
