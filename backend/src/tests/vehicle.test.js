@@ -8,7 +8,6 @@ const User = require("../models/User");
 const Vehicle = require("../models/Vehicle");
 
 describe("Vehicle API", () => {
-
   let token;
 
   beforeAll(async () => {
@@ -16,29 +15,23 @@ describe("Vehicle API", () => {
   });
 
   beforeEach(async () => {
-
     await User.deleteMany({});
     await Vehicle.deleteMany({});
 
     // Register user
-    await request(app)
-      .post("/api/auth/register")
-      .send({
-        name: "Admin",
-        email: "admin@test.com",
-        password: "Password@123",
-      });
+    await request(app).post("/api/auth/register").send({
+      name: "Admin",
+      email: "admin@test.com",
+      password: "Password@123",
+    });
 
     // Login
-    const loginRes = await request(app)
-      .post("/api/auth/login")
-      .send({
-        email: "admin@test.com",
-        password: "Password@123",
-      });
+    const loginRes = await request(app).post("/api/auth/login").send({
+      email: "admin@test.com",
+      password: "Password@123",
+    });
 
     token = loginRes.body.token;
-
   });
 
   afterAll(async () => {
@@ -46,9 +39,7 @@ describe("Vehicle API", () => {
   });
 
   describe("POST /api/vehicles", () => {
-
     it("should add a vehicle", async () => {
-
       const res = await request(app)
         .post("/api/vehicles")
         .set("Authorization", `Bearer ${token}`)
@@ -65,9 +56,36 @@ describe("Vehicle API", () => {
       expect(res.body.success).toBe(true);
 
       expect(res.body.vehicle.make).toBe("Toyota");
-
     });
-
   });
 
+  describe("GET /api/vehicles", () => {
+    it("should return all vehicles", async () => {
+      await Vehicle.create({
+        make: "Toyota",
+        model: "Fortuner",
+        category: "SUV",
+        price: 4500000,
+        quantity: 5,
+      });
+
+      await Vehicle.create({
+        make: "Honda",
+        model: "City",
+        category: "Sedan",
+        price: 1500000,
+        quantity: 8,
+      });
+
+      const res = await request(app)
+        .get("/api/vehicles")
+        .set("Authorization", `Bearer ${token}`);
+
+      expect(res.statusCode).toBe(200);
+
+      expect(res.body.success).toBe(true);
+
+      expect(res.body.vehicles.length).toBe(2);
+    });
+  });
 });
