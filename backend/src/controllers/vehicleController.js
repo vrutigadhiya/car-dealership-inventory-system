@@ -1,9 +1,12 @@
-const { createVehicle } = require("../services/vehicleService");
-const Vehicle = require("../models/Vehicle");
+const {
+  createVehicle,
+  getAllVehicles,
+} = require("../services/vehicleService");
 
 // Add Vehicle
 const addVehicle = async (req, res, next) => {
   try {
+
     const vehicle = await createVehicle(req.body);
 
     res.status(201).json({
@@ -11,6 +14,7 @@ const addVehicle = async (req, res, next) => {
       message: "Vehicle added successfully",
       vehicle,
     });
+
   } catch (error) {
     next(error);
   }
@@ -18,10 +22,9 @@ const addVehicle = async (req, res, next) => {
 
 // Get All Vehicles
 const getVehicles = async (req, res, next) => {
-
   try {
 
-    const vehicles = await Vehicle.find();
+    const vehicles = await getAllVehicles();
 
     res.status(200).json({
       success: true,
@@ -29,9 +32,7 @@ const getVehicles = async (req, res, next) => {
     });
 
   } catch (error) {
-
     next(error);
-
   }
 };
 
