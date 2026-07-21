@@ -1,5 +1,6 @@
 const Vehicle = require("../models/Vehicle");
 const buildVehicleFilter = require("../utils/buildVehicleFilter");
+const checkVehicleStock = require("../utils/checkVehicleStock");
 
 // Create Vehicle
 const createVehicle = async (vehicleData) => {
@@ -40,9 +41,7 @@ const purchaseVehicle = async (id) => {
     return null;
   }
 
-  if (vehicle.quantity <= 0) {
-    throw new Error("Vehicle is out of stock");
-  }
+  checkVehicleStock(vehicle);
 
   vehicle.quantity -= 1;
 
