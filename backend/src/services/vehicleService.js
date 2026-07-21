@@ -50,6 +50,21 @@ const purchaseVehicle = async (id) => {
   return vehicle;
 };
 
+// Restock Vehicle
+const restockVehicle = async (id, quantity) => {
+  const vehicle = await Vehicle.findById(id);
+
+  if (!vehicle) {
+    return null;
+  }
+
+  vehicle.quantity += quantity;
+
+  await vehicle.save();
+
+  return vehicle;
+};
+
 module.exports = {
   createVehicle,
   getAllVehicles,
@@ -57,4 +72,5 @@ module.exports = {
   updateVehicle,
   deleteVehicle,
   purchaseVehicle,
+  restockVehicle,
 };

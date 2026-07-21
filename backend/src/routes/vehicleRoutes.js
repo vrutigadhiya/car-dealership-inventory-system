@@ -13,6 +13,7 @@ const {
   updateVehicleById,
   deleteVehicleById,
   purchaseVehicleById,
+  restockVehicleById,
 } = require("../controllers/vehicleController");
 
 router.post("/", authMiddleware, addVehicle);
@@ -31,6 +32,13 @@ router.post(
   authMiddleware,
   validateObjectId,
   purchaseVehicleById,
+);
+router.post(
+  "/:id/restock",
+  authMiddleware,
+  adminMiddleware,
+  validateObjectId,
+  restockVehicleById
 );
 
 module.exports = router;
