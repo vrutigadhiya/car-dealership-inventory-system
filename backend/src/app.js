@@ -15,7 +15,7 @@ const app = express();
 app.use(cors({
   origin: [
     "http://localhost:5173",
-    "https://car-dealership-inventory-system-plum.vercel.app/" // add this after step 4 gives you the URL
+    "https://car-dealership-inventory-system-vruti.vercel.app/" // add this after step 4 gives you the URL
   ],
   credentials: true,
 }));
