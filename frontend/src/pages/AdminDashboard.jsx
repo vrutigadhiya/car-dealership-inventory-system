@@ -6,6 +6,7 @@ import VehicleForm from "../components/VehicleForm";
 import ConfirmDialog from "../components/ConfirmDialog";
 import RestockModal from "../components/RestockModal";
 import { useToast } from "../context/ToastContext";
+import CarLoader from "./components/CarLoader";
 
 export default function AdminDashboard() {
   const [vehicles, setVehicles] = useState([]);
