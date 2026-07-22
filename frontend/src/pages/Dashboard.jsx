@@ -1,11 +1,23 @@
-import React from 'react'
+import { useEffect } from "react";
+import api from "../services/api";
 
-const Dashboard = () => {
+export default function Dashboard() {
+  useEffect(() => {
+    const fetchVehicles = async () => {
+      try {
+        const res = await api.get("/vehicles");
+        console.log(res.data);
+      } catch (err) {
+        console.log(err.response?.data || err.message);
+      }
+    };
+
+    fetchVehicles();
+  }, []);
+
   return (
-    <div className="flex items-center justify-center min-h-screen">
+    <div className="min-h-screen flex items-center justify-center">
       <h1 className="text-4xl font-bold">Dashboard</h1>
     </div>
   );
 }
-
-export default Dashboard
