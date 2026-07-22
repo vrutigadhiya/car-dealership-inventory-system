@@ -1,8 +1,14 @@
-import StockGauge from './StockGauge';
+import StockGauge from "./StockGauge";
+import { formatIndianCurrency } from "../utils/formatCurrency";
 
-const currency = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
-
-export default function VehicleCard({ vehicle, onPurchase, onEdit, onDelete, onRestock, busy }) {
+export default function VehicleCard({
+  vehicle,
+  onPurchase,
+  onEdit,
+  onDelete,
+  onRestock,
+  busy,
+}) {
   const isAdminView = Boolean(onEdit || onDelete || onRestock);
 
   return (
@@ -11,18 +17,36 @@ export default function VehicleCard({ vehicle, onPurchase, onEdit, onDelete, onR
         <span className="font-mono text-[11px] tracking-widest text-amber">
           STK #{vehicle._id.slice(-5).toUpperCase()}
         </span>
-        <span className="font-mono text-[11px] text-paper/60">{vehicle.category}</span>
+        <span className="font-mono text-[11px] text-paper/60">
+          {vehicle.category}
+        </span>
       </div>
-
+      <div className="w-full h-40 bg-paper-dim overflow-hidden">
+        {vehicle.imageUrl ? (
+          <img
+            src={`http://localhost:5000${vehicle.imageUrl}`}
+            alt={`${vehicle.make} ${vehicle.model}`}
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-steel/40 text-xs uppercase tracking-wide">
+            No image
+          </div>
+        )}
+      </div>
       <div className="p-4 flex flex-col gap-3 flex-1">
         <div>
           <h3 className="font-display text-xl uppercase leading-tight">
             {vehicle.make} {vehicle.model}
           </h3>
-          <p className="text-xs uppercase tracking-wide text-steel mt-0.5">{vehicle.category}</p>
+          <p className="text-xs uppercase tracking-wide text-steel mt-0.5">
+            {vehicle.category}
+          </p>
         </div>
 
-        <p className="font-mono text-2xl text-ink-light font-semibold">{currency.format(vehicle.price)}</p>
+        <p className="font-mono text-2xl text-ink-light font-semibold">
+          {formatIndianCurrency(vehicle.price)}
+        </p>
 
         <StockGauge quantity={vehicle.quantity} />
 
@@ -33,7 +57,11 @@ export default function VehicleCard({ vehicle, onPurchase, onEdit, onDelete, onR
               disabled={vehicle.quantity === 0 || busy}
               className="w-full bg-amber hover:bg-amber-dark disabled:bg-paper-dim disabled:text-steel/50 disabled:cursor-not-allowed text-ink font-semibold uppercase tracking-wide text-xs py-2.5 rounded-sm transition-colors"
             >
-              {vehicle.quantity === 0 ? 'Sold out' : busy ? 'Processing…' : 'Purchase'}
+              {vehicle.quantity === 0
+                ? "Sold out"
+                : busy
+                  ? "Processing…"
+                  : "Purchase"}
             </button>
           )}
 

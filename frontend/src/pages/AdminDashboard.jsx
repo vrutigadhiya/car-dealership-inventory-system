@@ -42,11 +42,12 @@ export default function AdminDashboard() {
 
   const closeForm = () => setShowForm(false);
 
-  const handleFormSubmit = async (data) => {
+  const handleFormSubmit = async (formData) => {
+    const config = { headers: { "Content-Type": "multipart/form-data" } };
     if (editingVehicle) {
-      await api.put(`/vehicles/${editingVehicle._id}`, data);
+      await api.put(`/vehicles/${editingVehicle._id}`, formData, config);
     } else {
-      await api.post("/vehicles", data);
+      await api.post("/vehicles", formData, config);
     }
     setShowForm(false);
     fetchVehicles();
