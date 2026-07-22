@@ -5,6 +5,8 @@ const router = express.Router();
 const authMiddleware = require("../middleware/authMiddleware");
 const adminMiddleware = require("../middleware/adminMiddleware");
 const validateObjectId = require("../middleware/validateObjectId");
+const upload = require("../middleware/uploadMiddleware");
+
 
 const {
   addVehicle,
@@ -16,10 +18,10 @@ const {
   restockVehicleById,
 } = require("../controllers/vehicleController");
 
-router.post("/", authMiddleware, addVehicle);
+router.post("/", authMiddleware, upload.single("image"), addVehicle);
 router.get("/", authMiddleware, getVehicles);
 router.get("/search", authMiddleware, searchVehicle);
-router.put("/:id", authMiddleware, validateObjectId, updateVehicleById);
+router.put("/:id", authMiddleware, upload.single("image"), validateObjectId, updateVehicleById);
 router.delete(
   "/:id",
   authMiddleware,

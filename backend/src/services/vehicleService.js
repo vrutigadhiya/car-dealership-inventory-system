@@ -54,15 +54,11 @@ const purchaseVehicle = async (id) => {
 // Restock Vehicle
 const restockVehicle = async (id, quantity) => {
   const vehicle = await Vehicle.findById(id);
-
   if (!vehicle) {
     return null;
   }
-
   updateVehicleQuantity(vehicle, quantity);
-
   await vehicle.save();
-
   return vehicle;
 };
 
