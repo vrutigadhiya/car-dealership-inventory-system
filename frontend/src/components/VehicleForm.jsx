@@ -4,10 +4,20 @@ const empty = { make: '', model: '', category: '', price: '', quantity: '' };
 
 export default function VehicleForm({ initial, onSubmit, onCancel }) {
   const [form, setForm] = useState(initial ? { ...empty, ...initial } : empty);
+  const [imageFile, setImageFile] = useState(null);
+  const [preview, setPreview] = useState(initial?.imageUrl ? `http://localhost:5000${initial.imageUrl}` : null);
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
 
   const update = (field) => (e) => setForm((prev) => ({ ...prev, [field]: e.target.value }));
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImageFile(file);
+      setPreview(URL.createObjectURL(file));
+    }
+  };
 
   const submit = async (e) => {
     e.preventDefault();
@@ -20,13 +30,17 @@ export default function VehicleForm({ initial, onSubmit, onCancel }) {
 
     setSaving(true);
     try {
-      await onSubmit({
-        make: form.make,
-        model: form.model,
-        category: form.category,
-        price: Number(form.price),
-        quantity: Number(form.quantity),
-      });
+      const formData = new FormData();
+      formData.append('make', form.make);
+      formData.append('model', form.model);
+      formData.append('category', form.category);
+      formData.append('price', Number(form.price));
+      formData.append('quantity', Number(form.quantity));
+      if (imageFile) {
+        formData.append('image', imageFile);
+      }
+
+      await onSubmit(formData);
     } catch (err) {
       setError(err.response?.data?.message || 'Something went wrong. Please try again.');
     } finally {
@@ -48,13 +62,32 @@ export default function VehicleForm({ initial, onSubmit, onCancel }) {
         )}
 
         <form onSubmit={submit} className="space-y-3">
+          <div className="rounded-sm">
+            <label className="block text-[10px] uppercase tracking-wider text-steel mb-2 font-mono">
+              Vehicle photo
+            </label>
+            {preview && (
+              <img src={preview} alt="Preview" className="w-full h-36 object-cover rounded-sm mb-3 border border-ink/10 shadow-sm" />
+            )}
+            <label className="flex items-center justify-between gap-3 rounded-sm border border-dashed border-ink/30 bg-paper px-3 py-2 text-sm text-steel cursor-pointer transition hover:border-amber hover:text-ink">
+              <span>{imageFile ? imageFile.name : 'Choose an image'}</span>
+              <span className="text-[10px] uppercase tracking-widest font-mono text-ink/70">Browse</span>
+              <input
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                onChange={handleImageChange}
+                className="sr-only"
+              />
+            </label>
+          </div>
+
           <div className="grid grid-cols-2 gap-3">
             <Field label="Make" value={form.make} onChange={update('make')} />
             <Field label="Model" value={form.model} onChange={update('model')} />
           </div>
           <Field label="Category" value={form.category} onChange={update('category')} />
           <div className="grid grid-cols-2 gap-3">
-            <Field label="Price (USD)" type="number" value={form.price} onChange={update('price')} />
+            <Field label="Price (₹)" type="number" value={form.price} onChange={update('price')} />
             <Field label="Quantity" type="number" value={form.quantity} onChange={update('quantity')} />
           </div>
 
