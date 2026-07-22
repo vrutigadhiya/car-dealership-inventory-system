@@ -51,33 +51,7 @@ Experience the application without any local setup.
 
 > **Note**
 >
-> The backend is hosted on **Render's free tier**. If the API has been inactive for several minutes, the first request may take **30–60 seconds** while the server wakes up. After that, requests respond normally. :contentReference[oaicite:0]{index=0}
-
----
-
-## 🔑 Demo Accounts
-
-### 👤 Customer
-
-```text
-Email:
-user@example.com
-
-Password:
-password123
-```
-
-### 👨‍💼 Admin
-
-```text
-Email:
-admin@example.com
-
-Password:
-admin123
-```
-
-> Replace the credentials above with your own demo accounts.
+> The backend is hosted on **Render's free tier**. If the API has been inactive for several minutes, the first request may take **30–60 seconds** while the server wakes up. After that, requests respond normally.
 
 ---
 
@@ -160,7 +134,6 @@ Bookings
 Profile
 ```
 
-
 ---
 
 # 🎨 UI Highlights
@@ -200,8 +173,6 @@ Profile
 ## Mobile View
 
 <img src="./frontend/src/assets/mobileView.png" width="400">
-
----
 
 ---
 
