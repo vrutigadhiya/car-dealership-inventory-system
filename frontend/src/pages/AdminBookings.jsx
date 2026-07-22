@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import api from "../services/api";
 import { formatIndianCurrency } from "../utils/formatCurrency";
-import CarLoader from "./components/CarLoader";
+import CarLoader from "../components/CarLoader";
 
 export default function AdminBookings() {
   const [bookings, setBookings] = useState([]);
