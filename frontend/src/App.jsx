@@ -7,9 +7,10 @@ import UserDashboard from "./pages/UserDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import MyBookings from "./pages/MyBookings";
+import AdminBookings from "./pages/AdminBookings";
 
 function App() {
-
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
@@ -20,6 +21,24 @@ function App() {
         {/* Public Routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+
+        {/* Booking */}
+        <Route
+          path="/my-bookings"
+          element={
+            <ProtectedRoute>
+              <MyBookings />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/bookings"
+          element={
+            <ProtectedRoute adminOnly>
+              <AdminBookings />
+            </ProtectedRoute>
+          }
+        />
 
         {/* User Dashboard */}
         <Route

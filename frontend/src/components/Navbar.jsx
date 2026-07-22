@@ -38,6 +38,22 @@ export default function Navbar() {
               >
                 Dashboard
               </Link>
+              {!isAdmin && (
+                <Link
+                  to="/my-bookings"
+                  className="hover:text-amber transition-colors uppercase tracking-wide text-xs font-semibold"
+                >
+                  My Bookings
+                </Link>
+              )}
+              {isAdmin && (
+                <Link
+                  to="/admin/bookings"
+                  className="hover:text-amber transition-colors uppercase tracking-wide text-xs font-semibold"
+                >
+                  Bookings
+                </Link>
+              )}
 
               <span className="hidden sm:inline text-paper/70">
                 {user.name}
@@ -62,7 +78,9 @@ export default function Navbar() {
                 to="/login"
                 className={({ isActive }) =>
                   `uppercase tracking-wide text-xs font-semibold transition-colors ${
-                    isActive ? "bg-amber-dark text-ink transition-colors px-3 py-1.5 rounded-sm" : "hover:text-amber"
+                    isActive
+                      ? "bg-amber-dark text-ink transition-colors px-3 py-1.5 rounded-sm"
+                      : "hover:text-amber"
                   }`
                 }
               >
@@ -73,7 +91,9 @@ export default function Navbar() {
                 to="/register"
                 className={({ isActive }) =>
                   `uppercase tracking-wide text-xs font-semibold transition-colors ${
-                    isActive ? "bg-amber-dark text-ink transition-colors px-3 py-1.5 rounded-sm" : "hover:text-amber"
+                    isActive
+                      ? "bg-amber-dark text-ink transition-colors px-3 py-1.5 rounded-sm"
+                      : "hover:text-amber"
                   }`
                 }
               >
