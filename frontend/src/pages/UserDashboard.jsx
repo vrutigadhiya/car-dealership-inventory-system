@@ -2,12 +2,15 @@ import { useState, useEffect } from 'react';
 import api from '../services/api';
 import VehicleCard from '../components/VehicleCard';
 import SearchBar from '../components/SearchBar';
+import PurchaseForm from '../components/PurchaseForm';
+import BookingConfirmation from '../components/BookingConfirmation';
 
 export default function UserDashboard() {
   const [vehicles, setVehicles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [busyId, setBusyId] = useState(null);
+  const [purchasingVehicle, setPurchasingVehicle] = useState(null);
+  const [confirmation, setConfirmation] = useState(null);
 
   const fetchVehicles = async (filters = {}) => {
     setLoading(true);
@@ -28,17 +31,16 @@ export default function UserDashboard() {
     fetchVehicles();
   }, []);
 
-  const handlePurchase = async (vehicleId) => {
-    setBusyId(vehicleId);
-    setError('');
-    try {
-      await api.post(`/vehicles/${vehicleId}/purchase`);
-      await fetchVehicles();
-    } catch (err) {
-      setError(err.response?.data?.message || 'Purchase failed.');
-    } finally {
-      setBusyId(null);
-    }
+  const openPurchaseForm = (vehicleId) => {
+    const vehicle = vehicles.find((v) => v._id === vehicleId);
+    setPurchasingVehicle(vehicle);
+  };
+
+  const handlePurchaseSubmit = async (buyerDetails) => {
+    const res = await api.post(`/vehicles/${purchasingVehicle._id}/purchase`, buyerDetails);
+    setPurchasingVehicle(null);
+    setConfirmation({ booking: res.data.booking, vehicle: res.data.vehicle });
+    await fetchVehicles();
   };
 
   return (
@@ -63,11 +65,26 @@ export default function UserDashboard() {
             <VehicleCard
               key={vehicle._id}
               vehicle={vehicle}
-              onPurchase={handlePurchase}
-              busy={busyId === vehicle._id}
+              onPurchase={openPurchaseForm}
             />
           ))}
         </div>
+      )}
+
+      {purchasingVehicle && (
+        <PurchaseForm
+          vehicle={purchasingVehicle}
+          onSubmit={handlePurchaseSubmit}
+          onCancel={() => setPurchasingVehicle(null)}
+        />
+      )}
+
+      {confirmation && (
+        <BookingConfirmation
+          booking={confirmation.booking}
+          vehicle={confirmation.vehicle}
+          onClose={() => setConfirmation(null)}
+        />
       )}
     </div>
   );
