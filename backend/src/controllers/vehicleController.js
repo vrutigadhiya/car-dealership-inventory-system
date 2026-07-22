@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { createBooking } = require("../services/bookingService");
 
 const {
   createVehicle,
@@ -105,34 +106,47 @@ const deleteVehicleById = async (req, res, next) => {
   }
 };
 
-// Purchase Vehicle
+// Purchase Vehicle (books it, decrements stock, saves buyer details)
 const purchaseVehicleById = async (req, res, next) => {
   try {
+    const { id } = req.params;
+    const { buyerName, buyerPhone, buyerEmail, buyerAddress } = req.body;
 
-    const vehicle = await purchaseVehicle(req.params.id);
-
-    if (!vehicle) {
-      return res.status(404).json({
-        success: false,
-        message: "Vehicle not found",
-      });
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ success: false, message: "Invalid vehicle ID format" });
     }
 
-    return res.status(200).json({
-      success: true,
-      message: "Vehicle purchased successfully",
-      vehicle,
-    });
-
-  } catch (error) {
-
-    if (error.message === "Vehicle is out of stock") {
+    if (!buyerName || !buyerPhone || !buyerEmail || !buyerAddress) {
       return res.status(400).json({
         success: false,
-        message: error.message,
+        message: "Name, phone, email, and address are required",
       });
     }
 
+    // purchaseVehicle (service) handles the stock check + decrement + save
+    const vehicle = await purchaseVehicle(id);
+
+    if (!vehicle) {
+      return res.status(404).json({ success: false, message: "Vehicle not found" });
+    }
+
+    const booking = await createBooking({
+      vehicle: vehicle._id,
+      user: req.user.id,
+      buyerName,
+      buyerPhone,
+      buyerEmail,
+      buyerAddress,
+      price: vehicle.price,
+    });
+
+    res.status(201).json({
+      success: true,
+      message: "Vehicle booked successfully",
+      booking,
+      vehicle,
+    });
+  } catch (error) {
     next(error);
   }
 };
@@ -142,10 +156,7 @@ const restockVehicleById = async (req, res, next) => {
   try {
     const { quantity } = req.body;
 
-    const vehicle = await restockVehicle(
-      req.params.id,
-      Number(quantity)
-    );
+    const vehicle = await restockVehicle(req.params.id, Number(quantity));
 
     if (!vehicle) {
       return res.status(404).json({
@@ -159,7 +170,6 @@ const restockVehicleById = async (req, res, next) => {
       message: "Vehicle restocked successfully",
       vehicle,
     });
-
   } catch (error) {
     next(error);
   }
@@ -172,5 +182,5 @@ module.exports = {
   updateVehicleById,
   deleteVehicleById,
   purchaseVehicleById,
-  restockVehicleById
+  restockVehicleById,
 };
