@@ -13,7 +13,9 @@ export default function MyBookings() {
         const res = await api.get("/bookings/my");
         setBookings(res.data.bookings);
       } catch (err) {
-        setError(err.response?.data?.message || "Failed to load your bookings.");
+        setError(
+          err.response?.data?.message || "Failed to load your bookings.",
+        );
       } finally {
         setLoading(false);
       }
@@ -24,9 +26,12 @@ export default function MyBookings() {
   return (
     <div className="max-w-5xl mx-auto px-6 py-10">
       <div className="mb-8 rounded-3xl bg-ink/5 border border-ink/10 p-8 shadow-sm">
-        <h1 className="font-display text-4xl uppercase tracking-tight text-ink mb-3">My Bookings</h1>
+        <h1 className="font-display text-4xl uppercase tracking-tight text-ink mb-3">
+          My Bookings
+        </h1>
         <p className="text-steel max-w-2xl text-sm leading-7">
-          Review your confirmed reservations, check booking dates, and view pricing in a clean, polished layout.
+          Review your confirmed reservations, check booking dates, and view
+          pricing in a clean, polished layout.
         </p>
       </div>
 
@@ -37,13 +42,15 @@ export default function MyBookings() {
       )}
 
       {loading ? (
-        <div className="rounded-3xl border border-ink/10 bg-white p-8 shadow-sm">
-          <p className="text-steel">Loading your bookings...</p>
-        </div>
+        <CarLoader message="Loading inventory..." />
       ) : bookings.length === 0 ? (
         <div className="rounded-3xl border border-ink/10 bg-white p-8 shadow-sm">
-          <p className="text-steel text-lg">You haven't booked any vehicles yet.</p>
-          <p className="mt-2 text-sm text-ink/70">Browse our inventory and find your next ride.</p>
+          <p className="text-steel text-lg">
+            You haven't booked any vehicles yet.
+          </p>
+          <p className="mt-2 text-sm text-ink/70">
+            Browse our inventory and find your next ride.
+          </p>
         </div>
       ) : (
         <div className="space-y-6">
@@ -69,13 +76,17 @@ export default function MyBookings() {
 
                   <div className="grid gap-3 sm:grid-cols-2">
                     <div className="rounded-3xl bg-ink/5 p-4">
-                      <p className="text-xs uppercase tracking-[0.2em] text-steel">Booked on</p>
+                      <p className="text-xs uppercase tracking-[0.2em] text-steel">
+                        Booked on
+                      </p>
                       <p className="mt-2 font-mono text-sm text-ink">
                         {new Date(booking.createdAt).toLocaleDateString()}
                       </p>
                     </div>
                     <div className="rounded-3xl bg-ink/5 p-4">
-                      <p className="text-xs uppercase tracking-[0.2em] text-steel">Booking ID</p>
+                      <p className="text-xs uppercase tracking-[0.2em] text-steel">
+                        Booking ID
+                      </p>
                       <p className="mt-2 font-mono text-sm text-ink break-all">
                         {booking._id}
                       </p>
@@ -84,7 +95,9 @@ export default function MyBookings() {
                 </div>
 
                 <div className="rounded-3xl bg-ink/5 px-6 py-5 text-right">
-                  <p className="text-xs uppercase tracking-[0.2em] text-steel">Total Price</p>
+                  <p className="text-xs uppercase tracking-[0.2em] text-steel">
+                    Total Price
+                  </p>
                   <p className="mt-3 text-3xl font-semibold text-ink">
                     {formatIndianCurrency(booking.price)}
                   </p>

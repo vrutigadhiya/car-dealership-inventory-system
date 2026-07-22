@@ -32,7 +32,7 @@ export default function AdminBookings() {
       )}
 
       {loading ? (
-        <p className="text-steel">Loading bookings...</p>
+        <CarLoader message="Loading inventory..." />
       ) : bookings.length === 0 ? (
         <p className="text-steel">No bookings yet.</p>
       ) : (
@@ -56,10 +56,13 @@ export default function AdminBookings() {
                   </td>
                   <td className="px-4 py-3">{booking.buyerName}</td>
                   <td className="px-4 py-3 text-steel">
-                    {booking.buyerPhone}<br />
+                    {booking.buyerPhone}
+                    <br />
                     <span className="text-xs">{booking.buyerEmail}</span>
                   </td>
-                  <td className="px-4 py-3 text-steel">{booking.buyerAddress}</td>
+                  <td className="px-4 py-3 text-steel">
+                    {booking.buyerAddress}
+                  </td>
                   <td className="px-4 py-3 text-right font-mono font-semibold">
                     {formatIndianCurrency(booking.price)}
                   </td>

@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react';
-import api from '../services/api';
-import VehicleCard from '../components/VehicleCard';
-import SearchBar from '../components/SearchBar';
-import VehicleForm from '../components/VehicleForm';
-import ConfirmDialog from '../components/ConfirmDialog';
-import RestockModal from '../components/RestockModal';
-import { useToast } from '../context/ToastContext';
+import { useState, useEffect } from "react";
+import api from "../services/api";
+import VehicleCard from "../components/VehicleCard";
+import SearchBar from "../components/SearchBar";
+import VehicleForm from "../components/VehicleForm";
+import ConfirmDialog from "../components/ConfirmDialog";
+import RestockModal from "../components/RestockModal";
+import { useToast } from "../context/ToastContext";
 
 export default function AdminDashboard() {
   const [vehicles, setVehicles] = useState([]);
@@ -21,11 +21,14 @@ export default function AdminDashboard() {
     setLoading(true);
     try {
       const hasFilters = Object.keys(filters).length > 0;
-      const endpoint = hasFilters ? '/vehicles/search' : '/vehicles';
+      const endpoint = hasFilters ? "/vehicles/search" : "/vehicles";
       const res = await api.get(endpoint, { params: filters });
       setVehicles(res.data.vehicles);
     } catch (err) {
-      showToast(err.response?.data?.message || 'Failed to load vehicles.', 'error');
+      showToast(
+        err.response?.data?.message || "Failed to load vehicles.",
+        "error",
+      );
     } finally {
       setLoading(false);
     }
@@ -52,13 +55,13 @@ export default function AdminDashboard() {
         await api.put(`/vehicles/${editingVehicle._id}`, formData, config);
         showToast("Vehicle updated successfully");
       } else {
-        await api.post('/vehicles', formData, config);
+        await api.post("/vehicles", formData, config);
         showToast("Vehicle added to inventory");
       }
       setShowForm(false);
       fetchVehicles();
     } catch (err) {
-      showToast(err.response?.data?.message || 'Save failed.', 'error');
+      showToast(err.response?.data?.message || "Save failed.", "error");
       throw err; // let VehicleForm's own error state show too
     }
   };
@@ -70,26 +73,32 @@ export default function AdminDashboard() {
       setConfirmingDelete(null);
       fetchVehicles();
     } catch (err) {
-      showToast(err.response?.data?.message || 'Delete failed.', 'error');
+      showToast(err.response?.data?.message || "Delete failed.", "error");
       setConfirmingDelete(null);
     }
   };
 
   const handleRestockSubmit = async (amount) => {
     try {
-      await api.post(`/vehicles/${restockingVehicle._id}/restock`, { quantity: amount });
-      showToast(`Added ${amount} to ${restockingVehicle.make} ${restockingVehicle.model}`);
+      await api.post(`/vehicles/${restockingVehicle._id}/restock`, {
+        quantity: amount,
+      });
+      showToast(
+        `Added ${amount} to ${restockingVehicle.make} ${restockingVehicle.model}`,
+      );
       setRestockingVehicle(null);
       fetchVehicles();
     } catch (err) {
-      showToast(err.response?.data?.message || 'Restock failed.', 'error');
+      showToast(err.response?.data?.message || "Restock failed.", "error");
     }
   };
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-8">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="font-display text-3xl uppercase">Inventory Management</h1>
+        <h1 className="font-display text-3xl uppercase">
+          Inventory Management
+        </h1>
         <button
           onClick={openAddForm}
           className="bg-amber hover:bg-amber-dark text-ink font-semibold uppercase tracking-wide text-xs px-4 py-2.5 rounded-sm transition-colors"
@@ -101,7 +110,7 @@ export default function AdminDashboard() {
       <SearchBar onSearch={fetchVehicles} onReset={() => fetchVehicles()} />
 
       {loading ? (
-        <p className="text-steel mt-6">Loading vehicles...</p>
+        <CarLoader message="Loading inventory..." />
       ) : vehicles.length === 0 ? (
         <p className="text-steel mt-6">No vehicles found.</p>
       ) : (
