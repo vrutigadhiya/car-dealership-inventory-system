@@ -1,27 +1,28 @@
-import { useState, useEffect } from 'react';
-import api from '../services/api';
-import VehicleCard from '../components/VehicleCard';
-import SearchBar from '../components/SearchBar';
-import PurchaseForm from '../components/PurchaseForm';
-import BookingConfirmation from '../components/BookingConfirmation';
+import { useState, useEffect } from "react";
+import api from "../services/api";
+import VehicleCard from "../components/VehicleCard";
+import SearchBar from "../components/SearchBar";
+import PurchaseForm from "../components/PurchaseForm";
+import BookingConfirmation from "../components/BookingConfirmation";
+import CarLoader from "../components/CarLoader";
 
 export default function UserDashboard() {
   const [vehicles, setVehicles] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [purchasingVehicle, setPurchasingVehicle] = useState(null);
   const [confirmation, setConfirmation] = useState(null);
 
   const fetchVehicles = async (filters = {}) => {
     setLoading(true);
-    setError('');
+    setError("");
     try {
       const hasFilters = Object.keys(filters).length > 0;
-      const endpoint = hasFilters ? '/vehicles/search' : '/vehicles';
+      const endpoint = hasFilters ? "/vehicles/search" : "/vehicles";
       const res = await api.get(endpoint, { params: filters });
       setVehicles(res.data.vehicles);
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to load vehicles.');
+      setError(err.response?.data?.message || "Failed to load vehicles.");
     } finally {
       setLoading(false);
     }
@@ -37,7 +38,10 @@ export default function UserDashboard() {
   };
 
   const handlePurchaseSubmit = async (buyerDetails) => {
-    const res = await api.post(`/vehicles/${purchasingVehicle._id}/purchase`, buyerDetails);
+    const res = await api.post(
+      `/vehicles/${purchasingVehicle._id}/purchase`,
+      buyerDetails,
+    );
     setPurchasingVehicle(null);
     setConfirmation({ booking: res.data.booking, vehicle: res.data.vehicle });
     await fetchVehicles();
@@ -45,7 +49,9 @@ export default function UserDashboard() {
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-8">
-      <h1 className="font-display text-3xl uppercase mb-6">Available Vehicles</h1>
+      <h1 className="font-display text-3xl uppercase mb-6">
+        Available Vehicles
+      </h1>
 
       <SearchBar onSearch={fetchVehicles} onReset={() => fetchVehicles()} />
 
@@ -56,7 +62,7 @@ export default function UserDashboard() {
       )}
 
       {loading ? (
-        <p className="text-steel mt-6">Loading vehicles...</p>
+        <CarLoader message="Loading vehicles..." />
       ) : vehicles.length === 0 ? (
         <p className="text-steel mt-6">No vehicles found.</p>
       ) : (
