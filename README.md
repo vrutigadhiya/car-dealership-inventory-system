@@ -33,6 +33,54 @@ The application is optimized for **desktop, tablet and mobile devices** with a m
 
 ---
 
+---
+
+# 🌐 Live Demo
+
+Experience the application without any local setup.
+
+## 🚀 Frontend (Vercel)
+
+**Live Website:**  
+👉 **https://car-dealership-inventory-system-plum.vercel.app/**
+
+## ⚙️ Backend API (Render)
+
+**REST API:**  
+👉 **https://car-dealership-inventory-system-xz8y.onrender.com**
+
+> **Note**
+>
+> The backend is hosted on **Render's free tier**. If the API has been inactive for several minutes, the first request may take **30–60 seconds** while the server wakes up. After that, requests respond normally. :contentReference[oaicite:0]{index=0}
+
+---
+
+## 🔑 Demo Accounts
+
+### 👤 Customer
+
+```text
+Email:
+user@example.com
+
+Password:
+password123
+```
+
+### 👨‍💼 Admin
+
+```text
+Email:
+admin@example.com
+
+Password:
+admin123
+```
+
+> Replace the credentials above with your own demo accounts.
+
+---
+
 # ✨ Features
 
 
