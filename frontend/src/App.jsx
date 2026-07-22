@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 import Login from "./pages/Login";
@@ -6,15 +6,12 @@ import Register from "./pages/Register";
 import UserDashboard from "./pages/UserDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
 
 function App() {
-  const location = useLocation();
-
-  const hideNavbar =
-    location.pathname === "/login" || location.pathname === "/register";
 
   return (
-    <>
+    <div className="min-h-screen flex flex-col">
       <Navbar />
       <Routes>
         {/* Redirect root */}
@@ -47,7 +44,8 @@ function App() {
         {/* Invalid URL */}
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
-    </>
+      <Footer />
+    </div>
   );
 }
 
