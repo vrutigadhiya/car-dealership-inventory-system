@@ -23,10 +23,11 @@ const vehicleSchema = new mongoose.Schema(
       required: true,
       default: 0,
     },
+    imageUrl: { type: String, default: "" },
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 module.exports = mongoose.model("Vehicle", vehicleSchema);

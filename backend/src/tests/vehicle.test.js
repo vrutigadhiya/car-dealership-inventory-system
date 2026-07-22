@@ -50,6 +50,7 @@ describe("Vehicle API", () => {
           category: "SUV",
           price: 4500000,
           quantity: 5,
+          imageUrl:"/uploads/vehicles/bmw.avif",
         });
 
       expect(res.statusCode).toBe(201);
@@ -258,6 +259,7 @@ describe("Vehicle API", () => {
         category: "SUV",
         price: 7000000,
         quantity: 5,
+        imageUrl: "/uploads/vehicles/bmw.avif",
       });
 
       const res = await request(app)

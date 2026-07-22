@@ -13,11 +13,41 @@ const {
 // Add Vehicle
 const addVehicle = async (req, res, next) => {
   try {
-    const vehicle = await createVehicle(req.body);
+    const vehicleData = { ...req.body };
+
+    if (req.file) {
+      vehicleData.imageUrl = `/uploads/vehicles/${req.file.filename}`;
+    }
+
+    const vehicle = await createVehicle(vehicleData);
 
     res.status(201).json({
       success: true,
       message: "Vehicle added successfully",
+      vehicle,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const updateVehicleById = async (req, res, next) => {
+  try {
+    const vehicleData = { ...req.body };
+
+    if (req.file) {
+      vehicleData.imageUrl = `/uploads/vehicles/${req.file.filename}`;
+    }
+
+    const vehicle = await updateVehicle(req.params.id, vehicleData);
+
+    if (!vehicle) {
+      return res.status(404).json({ success: false, message: "Vehicle not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Vehicle updated successfully",
       vehicle,
     });
   } catch (error) {
@@ -46,28 +76,6 @@ const searchVehicle = async (req, res, next) => {
     res.status(200).json({
       success: true,
       vehicles,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-// Update Vehicle
-const updateVehicleById = async (req, res, next) => {
-  try {
-    const vehicle = await updateVehicle(req.params.id, req.body);
-
-    if (!vehicle) {
-      return res.status(404).json({
-        success: false,
-        message: "Vehicle not found",
-      });
-    }
-
-    res.status(200).json({
-      success: true,
-      message: "Vehicle updated successfully",
-      vehicle,
     });
   } catch (error) {
     next(error);
