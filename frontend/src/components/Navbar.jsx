@@ -30,49 +30,7 @@ export default function Navbar() {
 
         {/* Navigation */}
         <nav className="flex items-center gap-6 text-sm">
-          {user ? (
-            <>
-              <Link
-                to={isAdmin ? "/admin" : "/dashboard"}
-                className="hover:text-amber transition-colors"
-              >
-                Dashboard
-              </Link>
-              {!isAdmin && (
-                <Link
-                  to="/my-bookings"
-                  className="hover:text-amber transition-colors uppercase tracking-wide text-xs font-semibold"
-                >
-                  My Bookings
-                </Link>
-              )}
-              {isAdmin && (
-                <Link
-                  to="/admin/bookings"
-                  className="hover:text-amber transition-colors uppercase tracking-wide text-xs font-semibold"
-                >
-                  Bookings
-                </Link>
-              )}
-
-              <span className="hidden sm:inline text-paper/70">
-                {user.name}
-
-                {isAdmin && (
-                  <span className="ml-2 font-mono text-[10px] uppercase bg-amber text-ink px-2 py-0.5 rounded-sm tracking-wider">
-                    Admin
-                  </span>
-                )}
-              </span>
-
-              <button
-                onClick={handleLogout}
-                className="border border-paper/30 hover:border-amber hover:text-amber transition-colors px-3 py-1.5 rounded-sm uppercase tracking-wide text-xs font-semibold"
-              >
-                Log Out
-              </button>
-            </>
-          ) : (
+          {!user ? (
             <>
               <NavLink
                 to="/login"
@@ -99,6 +57,67 @@ export default function Navbar() {
               >
                 Register
               </NavLink>
+            </>
+          ) : (
+            <>
+              <NavLink
+                to={isAdmin ? "/admin" : "/dashboard"}
+                className={({ isActive }) =>
+                  `uppercase tracking-wide text-xs font-semibold transition-colors ${
+                    isActive
+                      ? "bg-amber text-ink px-3 py-1.5 rounded-sm"
+                      : "hover:text-amber"
+                  }`
+                }
+              >
+                Dashboard
+              </NavLink>
+              {!isAdmin && (
+                <NavLink
+                  to="/my-bookings"
+                  className={({ isActive }) =>
+                    `uppercase tracking-wide text-xs font-semibold transition-colors ${
+                      isActive
+                        ? "bg-amber text-ink px-3 py-1.5 rounded-sm"
+                        : "hover:text-amber"
+                    }`
+                  }
+                >
+                  My Bookings
+                </NavLink>
+              )}
+
+              {isAdmin && (
+                <NavLink
+                  to="/admin/bookings"
+                  className={({ isActive }) =>
+                    `uppercase tracking-wide text-xs font-semibold transition-colors ${
+                      isActive
+                        ? "bg-amber text-ink px-3 py-1.5 rounded-sm"
+                        : "hover:text-amber"
+                    }`
+                  }
+                >
+                  Bookings
+                </NavLink>
+              )}
+
+              <span className="hidden md:flex items-center gap-2 text-paper/80 font-medium">
+                {user.name}
+
+                {isAdmin && (
+                  <span className="ml-2 font-mono text-[10px] uppercase bg-amber text-ink px-2 py-0.5 rounded-sm tracking-wider">
+                    Admin
+                  </span>
+                )}
+              </span>
+
+              <button
+                onClick={handleLogout}
+                className="border border-paper/30 hover:border-amber hover:text-amber transition-colors px-3 py-1.5 rounded-sm uppercase tracking-wide text-xs font-semibold"
+              >
+                Log Out
+              </button>
             </>
           )}
         </nav>
