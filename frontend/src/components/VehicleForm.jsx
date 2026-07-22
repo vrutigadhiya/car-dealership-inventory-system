@@ -1,11 +1,12 @@
 import { useState } from 'react';
+const API_BASE = import.meta.env.VITE_API_BASE_URL?.replace("/api", "") || "http://localhost:5000";
 
 const empty = { make: '', model: '', category: '', price: '', quantity: '' };
 
 export default function VehicleForm({ initial, onSubmit, onCancel }) {
   const [form, setForm] = useState(initial ? { ...empty, ...initial } : empty);
   const [imageFile, setImageFile] = useState(null);
-  const [preview, setPreview] = useState(initial?.imageUrl ? `http://localhost:5000${initial.imageUrl}` : null);
+  const [preview, setPreview] = useState(initial?.imageUrl ? `${API_BASE}${vehicle.imageUrl}` : null);
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
 

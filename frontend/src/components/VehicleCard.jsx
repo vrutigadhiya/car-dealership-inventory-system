@@ -1,6 +1,8 @@
 import StockGauge from "./StockGauge";
 import { formatIndianCurrency } from "../utils/formatCurrency";
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL?.replace("/api", "") || "http://localhost:5000";
+
 export default function VehicleCard({
   vehicle,
   onPurchase,
@@ -24,7 +26,7 @@ export default function VehicleCard({
       <div className="w-full h-40 bg-paper-dim overflow-hidden">
         {vehicle.imageUrl ? (
           <img
-            src={`http://localhost:5000${vehicle.imageUrl}`}
+            src={`${API_BASE}${vehicle.imageUrl}`}
             alt={`${vehicle.make} ${vehicle.model}`}
             className="w-full h-full object-cover"
           />
