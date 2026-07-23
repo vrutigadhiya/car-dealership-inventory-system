@@ -1,4 +1,5 @@
 const { body, validationResult } = require("express-validator");
+const User = require("../models/User");
 
 /**
  * Middleware to check for validation errors and short-circuit the request if any exist.
@@ -55,7 +56,13 @@ const validateRegister = [
     .withMessage("Email is required")
     .isEmail()
     .withMessage("Enter a valid email address")
-    .normalizeEmail(),
+    .normalizeEmail()
+    .custom(async (email) => {
+      const existingUser = await User.findOne({ email });
+      if (existingUser) {
+        throw new Error("This email is already registered");
+      }
+    }),
 
   body("password")
     .notEmpty()
