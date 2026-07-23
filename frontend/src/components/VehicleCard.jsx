@@ -1,95 +1,109 @@
-import StockGauge from "./StockGauge";
-import { formatIndianCurrency } from "../utils/formatCurrency";
+import React from "react";
+import { Edit2, Trash2, RefreshCw } from "lucide-react";
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL?.replace("/api", "") || "http://localhost:5000";
+/**
+ * Helper to build an absolute URL for local server uploads
+ * or return the original URL if hosted externally (e.g., Cloudinary/S3).
+ */
+const getImageUrl = (imagePath) => {
+  if (!imagePath) return null;
 
-export default function VehicleCard({
-  vehicle,
-  onPurchase,
-  onEdit,
-  onDelete,
-  onRestock,
-  busy,
-}) {
-  const isAdminView = Boolean(onEdit || onDelete || onRestock);
+  // External image link (http/https)
+  if (imagePath.startsWith("http://") || imagePath.startsWith("https://")) {
+    return imagePath;
+  }
+
+  // Local server path resolution
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
+    ? import.meta.env.VITE_API_BASE_URL.replace("/api", "")
+    : "http://localhost:5000";
+
+  const cleanPath = imagePath.startsWith("/") ? imagePath : `/${imagePath}`;
+  return `${API_BASE_URL}${cleanPath}`;
+};
+
+export default function VehicleCard({ vehicle, onEdit, onDelete, onRestock }) {
+  const { make, model, year, price, stock, image, type } = vehicle;
+
+  // Fallback image placeholder
+  const placeholderImage =
+    "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&q=80&w=600";
 
   return (
-    <div className="bg-white rounded-md shadow-sm border border-ink/10 overflow-hidden flex flex-col hover:shadow-md transition-shadow">
-      <div className="bg-ink text-paper px-4 py-2 flex items-center justify-between">
-        <span className="font-mono text-[11px] tracking-widest text-amber">
-          STK #{vehicle._id.slice(-5).toUpperCase()}
-        </span>
-        <span className="font-mono text-[11px] text-paper/60">
-          {vehicle.category}
-        </span>
-      </div>
-      <div className="w-full h-40 bg-paper-dim overflow-hidden">
-        {vehicle.imageUrl ? (
+    <div className="bg-white border border-ink/10 rounded-sm shadow-sm overflow-hidden flex flex-col justify-between hover:border-amber/50 transition-all">
+      <div>
+        {/* Image Container */}
+        <div className="relative h-48 w-full bg-slate-100 overflow-hidden">
           <img
-            src={`${API_BASE}${vehicle.imageUrl}`}
-            alt={`${vehicle.make} ${vehicle.model}`}
+            src={getImageUrl(image) || placeholderImage}
+            alt={`${make} ${model}`}
             className="w-full h-full object-cover"
+            onError={(e) => {
+              // Gracefully handle broken image URLs
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = placeholderImage;
+            }}
           />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center text-steel/40 text-xs uppercase tracking-wide">
-            No image
+          {type && (
+            <span className="absolute top-2 right-2 bg-ink/80 text-paper text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-xs backdrop-blur-xs">
+              {type}
+            </span>
+          )}
+        </div>
+
+        {/* Details Section */}
+        <div className="p-4">
+          <div className="flex items-baseline justify-between mb-1">
+            <h3 className="font-display text-lg uppercase text-ink">
+              {year} {make} {model}
+            </h3>
           </div>
-        )}
-      </div>
-      <div className="p-4 flex flex-col gap-3 flex-1">
-        <div>
-          <h3 className="font-display text-xl uppercase leading-tight">
-            {vehicle.make} {vehicle.model}
-          </h3>
-          <p className="text-xs uppercase tracking-wide text-steel mt-0.5">
-            {vehicle.category}
+
+          <p className="text-amber-dark font-semibold text-base mb-3">
+            ${price ? price.toLocaleString() : "N/A"}
           </p>
-        </div>
 
-        <p className="font-mono text-2xl text-ink-light font-semibold">
-          {formatIndianCurrency(vehicle.price)}
-        </p>
-
-        <StockGauge quantity={vehicle.quantity} />
-
-        <div className="mt-auto pt-2 flex flex-col gap-2">
-          {onPurchase && (
-            <button
-              onClick={() => onPurchase(vehicle._id)}
-              disabled={vehicle.quantity === 0 || busy}
-              className="w-full bg-amber hover:bg-amber-dark disabled:bg-paper-dim disabled:text-steel/50 disabled:cursor-not-allowed text-ink font-semibold uppercase tracking-wide text-xs py-2.5 rounded-sm transition-colors"
+          <div className="flex items-center justify-between text-xs text-steel border-t border-ink/10 pt-3 font-mono">
+            <span>Stock Status:</span>
+            <span
+              className={`font-semibold ${
+                stock > 0 ? "text-emerald-600" : "text-rust"
+              }`}
             >
-              {vehicle.quantity === 0
-                ? "Sold out"
-                : busy
-                  ? "Processing…"
-                  : "Purchase"}
-            </button>
-          )}
-
-          {isAdminView && (
-            <div className="flex gap-2 text-xs">
-              <button
-                onClick={() => onEdit(vehicle)}
-                className="flex-1 border border-ink/20 hover:border-ink text-ink py-1.5 rounded-sm uppercase tracking-wide font-medium transition-colors"
-              >
-                Edit
-              </button>
-              <button
-                onClick={() => onRestock(vehicle._id)}
-                className="flex-1 border border-moss/40 text-moss hover:border-moss py-1.5 rounded-sm uppercase tracking-wide font-medium transition-colors"
-              >
-                Restock
-              </button>
-              <button
-                onClick={() => onDelete(vehicle._id)}
-                className="flex-1 border border-rust/40 text-rust hover:border-rust py-1.5 rounded-sm uppercase tracking-wide font-medium transition-colors"
-              >
-                Delete
-              </button>
-            </div>
-          )}
+              {stock > 0 ? `${stock} available` : "Out of stock"}
+            </span>
+          </div>
         </div>
+      </div>
+
+      {/* Action Buttons */}
+      <div className="p-4 pt-0 grid grid-cols-3 gap-2">
+        <button
+          onClick={() => onEdit(vehicle)}
+          className="flex items-center justify-center gap-1 text-xs border border-ink/15 text-ink hover:bg-slate-50 py-1.5 rounded-sm transition-colors"
+          title="Edit Details"
+        >
+          <Edit2 size={14} />
+          <span>Edit</span>
+        </button>
+
+        <button
+          onClick={() => onRestock(vehicle)}
+          className="flex items-center justify-center gap-1 text-xs border border-ink/15 text-ink hover:bg-slate-50 py-1.5 rounded-sm transition-colors"
+          title="Restock Inventory"
+        >
+          <RefreshCw size={14} />
+          <span>Stock</span>
+        </button>
+
+        <button
+          onClick={() => onDelete(vehicle)}
+          className="flex items-center justify-center gap-1 text-xs border border-red-200 text-red-600 hover:bg-red-50 py-1.5 rounded-sm transition-colors"
+          title="Delete Vehicle"
+        >
+          <Trash2 size={14} />
+          <span>Delete</span>
+        </button>
       </div>
     </div>
   );
