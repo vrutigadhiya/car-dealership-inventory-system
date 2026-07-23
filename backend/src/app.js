@@ -38,8 +38,9 @@ app.use(cors(corsOptions));
 // Body Parser Middleware
 app.use(express.json());
 
-// Serve static upload files directly from the local project uploads folder
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+// Serve static upload files directly from the absolute uploads directory
+const uploadsPath = path.resolve(__dirname, "uploads");
+app.use("/uploads", express.static(uploadsPath));
 
 // Test Route
 app.get("/test-cors", (req, res) => {
