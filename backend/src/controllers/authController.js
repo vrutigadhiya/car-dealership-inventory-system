@@ -1,12 +1,32 @@
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const generateToken = require("../utils/generateToken");
+const { validationResult } = require("express-validator");
 
 // ================= REGISTER =================
 
 const registerUser = async (req, res, next) => {
   try {
-    const { name, email, password } = req.body;
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        errors: errors.array(),
+      });
+    }
+
+    const { name, email, password, role } = req.body;
+
+    // Check existing user
+    const existingUser = await User.findOne({ email });
+
+    if (existingUser) {
+      return res.status(400).json({
+        success: false,
+        message: "User already exists",
+      });
+    }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -14,12 +34,16 @@ const registerUser = async (req, res, next) => {
       name,
       email,
       password: hashedPassword,
-      role: "user",
+
+      // IMPORTANT CHANGE
+      role: role || "user",
     });
 
     res.status(201).json({
       success: true,
+
       message: "User registered successfully",
+
       user: {
         _id: user._id,
         name: user.name,
@@ -40,11 +64,20 @@ const loginUser = async (req, res, next) => {
 
     const user = await User.findOne({ email });
 
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+
+        message: "User not found",
+      });
+    }
+
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
       return res.status(401).json({
         success: false,
+
         message: "Email or password wrong",
       });
     }
@@ -53,12 +86,18 @@ const loginUser = async (req, res, next) => {
 
     res.status(200).json({
       success: true,
+
       message: "Login successful",
+
       token,
+
       user: {
         _id: user._id,
+
         name: user.name,
+
         email: user.email,
+
         role: user.role,
       },
     });
