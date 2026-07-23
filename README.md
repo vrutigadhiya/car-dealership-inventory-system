@@ -227,34 +227,104 @@ Profile
 
 ## 📁 Project Structure
 
+# 📁 Project Structure
+
 ```text
-car-dealership-inventory/
-├── 📂 backend/
-│   ├── 📂 config/          # Database configuration & environment setups
-│   ├── 📂 controllers/     # Request/Response orchestration layer
-│   ├── 📂 data/            # Static reference and seed data
-│   ├── 📂 middleware/      # JWT auth, role validation, file upload, error handlers
-│   ├── 📂 models/          # Mongoose database schemas (User, Vehicle, Booking)
-│   ├── 📂 routes/          # REST route declarations
-│   ├── 📂 services/        # Isolated business logic handlers
-│   ├── 📂 tests/           # Integration & unit tests (Jest + Supertest)
-│   ├── 📂 uploads/         # Static file storage directory for uploaded media
-│   ├── 📄 app.js           # Express app configuration
-│   ├── 📄 server.js        # Application entrypoint
-│   └── 📄 seed.js          # Database populator script
+🚗 car-dealership-inventory-system
 │
-├── 📂 frontend/
-│   ├── 📂 src/
-│   │   ├── 📂 components/  # Reusable UI elements & layouts
-│   │   ├── 📂 context/     # Auth Context & Notification Providers
-│   │   ├── 📂 pages/       # Route components (Dashboards, Auth pages, etc.)
-│   │   ├── 📂 services/    # Axios instance with auth interceptors
-│   │   └── 📂 utils/       # Helpers (e.g., currency formatting)
-│   ├── 📄 App.jsx          # Top-level router routing setup
-│   └── 📄 main.jsx         # React application mounting point
+├── 📂 backend
+│   │
+│   ├── 📂 config
+│   │   └── database.js              # MongoDB connection setup
+│   │
+│   ├── 📂 controllers                # Request handling logic
+│   │   ├── authController.js
+│   │   ├── vehicleController.js
+│   │   └── bookingController.js
+│   │
+│   ├── 📂 middleware                 # Security & validation layer
+│   │   ├── authMiddleware.js
+│   │   ├── adminMiddleware.js
+│   │   ├── uploadMiddleware.js
+│   │   ├── validators.js
+│   │   └── errorHandler.js
+│   │
+│   ├── 📂 models                     # Database schemas
+│   │   ├── User.js
+│   │   ├── Vehicle.js
+│   │   └── Booking.js
+│   │
+│   ├── 📂 routes                     # REST API routes
+│   │   ├── authRoutes.js
+│   │   ├── vehicleRoutes.js
+│   │   └── bookingRoutes.js
+│   │
+│   ├── 📂 services                   # Business logic layer
+│   │   ├── vehicleService.js
+│   │   └── bookingService.js
+│   │
+│   ├── 📂 utils                      # Reusable helper functions
+│   │   ├── generateToken.js
+│   │   ├── checkVehicleStock.js
+│   │   └── updateVehicleQuantity.js
+│   │
+│   ├── 📂 tests                      # Jest + Supertest tests
+│   │   ├── auth.test.js
+│   │   ├── vehicle.test.js
+│   │   └── booking.test.js
+│   │
+│   ├── 📂 uploads                    # Vehicle images
+│   │
+│   ├── app.js                        # Express configuration
+│   ├── server.js                     # Server entry point
+│   ├── seed.js                       # Demo data generator
+│   └── package.json
 │
-├── 📄 PROMPTS.md           # Engineering prompt history
-└── 📄 README.md            # Technical documentation
+│
+├── 📂 frontend
+│   │
+│   ├── 📂 src
+│   │   │
+│   │   ├── 📂 components             # Reusable UI components
+│   │   │   ├── Navbar.jsx
+│   │   │   ├── Footer.jsx
+│   │   │   ├── VehicleCard.jsx
+│   │   │   ├── VehicleForm.jsx
+│   │   │   ├── SearchBar.jsx
+│   │   │   ├── StockGauge.jsx
+│   │   │   └── ProtectedRoute.jsx
+│   │   │
+│   │   ├── 📂 pages                  # Application screens
+│   │   │   ├── Login.jsx
+│   │   │   ├── Register.jsx
+│   │   │   ├── UserDashboard.jsx
+│   │   │   ├── AdminDashboard.jsx
+│   │   │   ├── MyBookings.jsx
+│   │   │   └── AdminBookings.jsx
+│   │   │
+│   │   ├── 📂 context                # Global state management
+│   │   │   ├── AuthContext.jsx
+│   │   │   └── ToastContext.jsx
+│   │   │
+│   │   ├── 📂 services                # API communication
+│   │   │   ├── api.js
+│   │   │   └── vehicleService.js
+│   │   │
+│   │   ├── 📂 utils                   # Frontend helpers
+│   │   │   └── formatCurrency.js
+│   │   │
+│   │   ├── App.jsx                    # Route configuration
+│   │   └── main.jsx                   # React entry point
+│   │
+│   ├── public
+│   ├── package.json
+│   └── vite.config.js
+│
+│
+├── 📄 README.md                       # Documentation
+├── 📄 PROMPTS.md                      # Development notes
+└── 📄 .gitignore
+
 ```
 
 ---
@@ -306,7 +376,7 @@ All protected endpoints require a valid bearer token passed via header:
 ### 1️⃣ Clone Repository
 ```bash
 git clone https://github.com/vrutigadhiya/car-dealership-inventory-system
-cd car-dealership-inventory
+cd car-dealership-inventory-system
 ```
 
 ### 2️⃣ Backend Configuration
