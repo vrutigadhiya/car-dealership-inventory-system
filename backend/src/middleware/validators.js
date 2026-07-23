@@ -84,6 +84,11 @@ const validateRegister = [
     .matches(/[!@#$%^&*(),.?":{}|<>]/)
     .withMessage("Password must contain at least one special character"),
 
+  body("role")
+    .optional()
+    .isIn(["user", "admin"])
+    .withMessage("Invalid role"),
+
   handleValidationErrors,
 ];
 

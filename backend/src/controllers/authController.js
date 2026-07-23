@@ -18,6 +18,9 @@ const registerUser = async (req, res, next) => {
 
     const { name, email, password, role } = req.body;
 
+    console.log("BODY:", req.body);
+    console.log("ROLE:", role);
+
     // Check existing user
     const existingUser = await User.findOne({ email });
 
@@ -38,6 +41,8 @@ const registerUser = async (req, res, next) => {
       // IMPORTANT CHANGE
       role: role || "user",
     });
+
+    console.log("SAVED USER:", user);
 
     res.status(201).json({
       success: true,
@@ -61,13 +66,11 @@ const registerUser = async (req, res, next) => {
 const loginUser = async (req, res, next) => {
   try {
     const { email, password } = req.body;
-
     const user = await User.findOne({ email });
 
     if (!user) {
       return res.status(404).json({
         success: false,
-
         message: "User not found",
       });
     }
@@ -77,7 +80,6 @@ const loginUser = async (req, res, next) => {
     if (!isPasswordValid) {
       return res.status(401).json({
         success: false,
-
         message: "Email or password wrong",
       });
     }
@@ -86,18 +88,12 @@ const loginUser = async (req, res, next) => {
 
     res.status(200).json({
       success: true,
-
       message: "Login successful",
-
       token,
-
       user: {
         _id: user._id,
-
         name: user.name,
-
         email: user.email,
-
         role: user.role,
       },
     });
