@@ -108,6 +108,7 @@ export default function PurchaseForm({ vehicle, onSubmit, onCancel }) {
           <Field
             label="Phone number"
             value={form.buyerPhone}
+            type="number"
             onChange={update("buyerPhone")}
           />
 
