@@ -15,16 +15,19 @@ const {
   restockVehicle,
 } = require("../services/vehicleService");
 
-// Helper to remove orphaned file if update/delete happens
+// Delete image from disk
 const deleteOldImage = (imagePath) => {
   if (!imagePath || imagePath.startsWith("http")) return;
+
   const fullPath = path.resolve(__dirname, "..", imagePath.replace(/^\//, ""));
+
   if (fs.existsSync(fullPath)) {
     fs.unlink(fullPath, (err) => {
-      if (err) console.error("Error deleting old image:", err);
+      if (err) console.error("Error deleting image:", err);
     });
   }
 };
+
 
 // ================= ADD VEHICLE =================
 const addVehicle = async (req, res, next) => {
