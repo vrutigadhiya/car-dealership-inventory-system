@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const path = require("path");
+const cloudinary = require("../config/cloudinary");
 const fs = require("fs");
 const { createBooking } = require("../services/bookingService");
 
@@ -33,16 +34,36 @@ const deleteOldImage = (imagePath) => {
 
 // ================= ADD VEHICLE =================
 const addVehicle = async (req, res, next) => {
-  console.log(req.file);
+  console.log("=== CLOUDINARY ADD VEHICLE ===");
   try {
     const vehicleData = { ...req.body, createdBy: req.user.id };
 
+    console.log("req.file:", req.file);
+
     if (req.file) {
-      const imagePath = `/uploads/vehicles/${req.file.filename}`;
-      vehicleData.imageUrl = imagePath;
+      console.log("Uploading to Cloudinary...");
+
+      console.log("Uploading to Cloudinary...");
+
+      const result = await cloudinary.uploader.upload(req.file.path, {
+        folder: "vehicles",
+      });
+
+      console.log("Cloudinary Result:", result);
+      console.log("Cloudinary URL:", result.secure_url);
+
+      console.log("Cloudinary secure_url:", result.secure_url);
+
+      vehicleData.imageUrl = result.secure_url;
+
+      fs.unlinkSync(req.file.path);
     }
 
+    console.log("Vehicle data before save:", vehicleData);
+
     const vehicle = await createVehicle(vehicleData);
+
+    console.log("Saved vehicle:", vehicle);
 
     res.status(201).json({
       success: true,
@@ -50,6 +71,7 @@ const addVehicle = async (req, res, next) => {
       vehicle,
     });
   } catch (error) {
+    console.error("Cloudinary Upload Error:", error);
     next(error);
   }
 };
@@ -125,8 +147,14 @@ const updateVehicleById = async (req, res, next) => {
     const vehicleData = { ...req.body };
 
     if (req.file) {
-      const newImagePath = `/uploads/vehicles/${req.file.filename}`;
-      vehicleData.imageUrl = newImagePath;
+      const result = await cloudinary.uploader.upload(req.file.path, {
+        folder: "vehicles",
+      });
+
+      vehicleData.imageUrl = result.secure_url;
+
+      // delete temporary local file
+      fs.unlinkSync(req.file.path);
 
       // Clean up old image file on disk
       const oldImage = existingVehicle.imageUrl;
