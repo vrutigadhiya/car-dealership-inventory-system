@@ -80,6 +80,7 @@ export default function RegisterPage() {
   const submit = async (e) => {
     e.preventDefault();
     setGeneralError("");
+    console.log(form);
 
     if (!validateAll()) return;
 

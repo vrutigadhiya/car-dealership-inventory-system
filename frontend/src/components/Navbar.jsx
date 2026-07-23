@@ -89,6 +89,7 @@ export default function Navbar() {
               <>
                 <NavLink
                   to={isAdmin ? "/admin" : "/dashboard"}
+                  end
                   className={navClass}
                 >
                   Dashboard
