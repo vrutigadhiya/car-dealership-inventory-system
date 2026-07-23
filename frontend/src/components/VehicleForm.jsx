@@ -19,7 +19,6 @@ export default function VehicleForm({ initial, onSubmit, onCancel }) {
 
   const [imageFile, setImageFile] = useState(null);
 
-  // ✅ FIXED: use initial.imageUrl instead of vehicle.imageUrl
   const [preview, setPreview] = useState(
     initial?.imageUrl
       ? initial.imageUrl.startsWith('http')
@@ -43,7 +42,6 @@ export default function VehicleForm({ initial, onSubmit, onCancel }) {
 
     if (!file) return;
 
-    // Validate file type
     const allowedTypes = [
       'image/jpeg',
       'image/jpg',
@@ -115,12 +113,10 @@ export default function VehicleForm({ initial, onSubmit, onCancel }) {
   return (
     <div className="fixed inset-0 bg-ink/60 flex items-center justify-center z-30 p-4">
       <div className="bg-paper rounded-md shadow-xl w-full max-w-md p-6 border-t-4 border-amber max-h-[90vh] overflow-y-auto">
-        {/* Header */}
         <h2 className="font-display text-2xl uppercase mb-4">
           {initial ? 'Update Vehicle' : 'Add Vehicle to Lot'}
         </h2>
 
-        {/* Error */}
         {error && (
           <div className="bg-rust/10 border border-rust/30 text-rust text-sm rounded-sm px-3 py-2 mb-4">
             {error}
@@ -128,7 +124,6 @@ export default function VehicleForm({ initial, onSubmit, onCancel }) {
         )}
 
         <form onSubmit={submit} className="space-y-4">
-          {/* Vehicle Image */}
           <div className="rounded-sm">
             <label className="block text-[10px] uppercase tracking-wider text-steel mb-2 font-mono">
               Vehicle Photo
@@ -164,7 +159,6 @@ export default function VehicleForm({ initial, onSubmit, onCancel }) {
             </label>
           </div>
 
-          {/* Make + Model */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Field
               label="Make"
@@ -179,26 +173,12 @@ export default function VehicleForm({ initial, onSubmit, onCancel }) {
             />
           </div>
 
-          {/* Category */}
-          <div>
-            <label className="block text-[10px] uppercase tracking-wider text-steel mb-1 font-mono">
-              Category
-            </label>
+          <Field
+            label="Category"
+            value={form.category}
+            onChange={update('category')}
+          />
 
-            <select
-              value={form.category}
-              onChange={update('category')}
-              className="w-full border border-ink/15 rounded-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber bg-white"
-            >
-              <option value="">Select category</option>
-              <option value="SUV">SUV</option>
-              <option value="Sedan">Sedan</option>
-              <option value="Hatchback">Hatchback</option>
-              <option value="EV">EV</option>
-            </select>
-          </div>
-
-          {/* Price + Quantity */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Field
               label="Price (₹)"
@@ -215,7 +195,6 @@ export default function VehicleForm({ initial, onSubmit, onCancel }) {
             />
           </div>
 
-          {/* Buttons */}
           <div className="flex flex-col sm:flex-row gap-2 pt-2">
             <button
               type="submit"
