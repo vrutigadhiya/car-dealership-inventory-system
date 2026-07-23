@@ -172,7 +172,7 @@ Profile
 
 ## Mobile View
 
-<img src="./frontend/src/assets/mobileView.png" width="400">
+<img src="./screenshots/mobileView.png" width="400">
 
 ---
 
