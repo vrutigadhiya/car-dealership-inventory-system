@@ -1,16 +1,14 @@
 const express = require("express");
-
 const router = express.Router();
 
 const authMiddleware = require("../middleware/authMiddleware");
 const adminMiddleware = require("../middleware/adminMiddleware");
-const validateObjectId = require("../middleware/validateObjectId");
 const upload = require("../middleware/uploadMiddleware");
-
 
 const {
   addVehicle,
   getVehicles,
+  getMyVehicles,
   searchVehicle,
   updateVehicleById,
   deleteVehicleById,
@@ -18,29 +16,26 @@ const {
   restockVehicleById,
 } = require("../controllers/vehicleController");
 
-router.post("/", authMiddleware, upload.single("image"), addVehicle);
-router.get("/", authMiddleware, getVehicles);
+// Wraps multer so its errors flow into the global error handler
+const handleImageUpload = (req, res, next) => {
+  upload.single("image")(req, res, (err) => {
+    if (err) return next(err);
+    next();
+  });
+};
+
+// Specific/named routes must come before "/:id"-style routes
 router.get("/search", authMiddleware, searchVehicle);
-router.put("/:id", authMiddleware, upload.single("image"), validateObjectId, updateVehicleById);
-router.delete(
-  "/:id",
-  authMiddleware,
-  adminMiddleware,
-  validateObjectId,
-  deleteVehicleById,
-);
-router.post(
-  "/:id/purchase",
-  authMiddleware,
-  validateObjectId,
-  purchaseVehicleById,
-);
-router.post(
-  "/:id/restock",
-  authMiddleware,
-  adminMiddleware,
-  validateObjectId,
-  restockVehicleById
-);
+router.get("/mine", authMiddleware, adminMiddleware, getMyVehicles);
+router.get("/", authMiddleware, getVehicles);
+
+// Admin routes
+router.post("/", authMiddleware, adminMiddleware, handleImageUpload, addVehicle);
+router.put("/:id", authMiddleware, adminMiddleware, handleImageUpload, updateVehicleById);
+router.delete("/:id", authMiddleware, adminMiddleware, deleteVehicleById);
+router.post("/:id/restock", authMiddleware, adminMiddleware, restockVehicleById);
+
+// Customer purchase
+router.post("/:id/purchase", authMiddleware, purchaseVehicleById);
 
 module.exports = router;
