@@ -33,9 +33,7 @@ const addVehicle = async (req, res, next) => {
 
     if (req.file) {
       const imagePath = `/uploads/vehicles/${req.file.filename}`;
-      // Populate both keys to prevent Mongoose schema field name mismatches
       vehicleData.imageUrl = imagePath;
-      vehicleData.image = imagePath;
     }
 
     const vehicle = await createVehicle(vehicleData);
@@ -98,13 +96,17 @@ const updateVehicleById = async (req, res, next) => {
     const { id } = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ success: false, message: "Invalid vehicle ID format" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid vehicle ID format" });
     }
 
     const existingVehicle = await getVehicleById(id);
 
     if (!existingVehicle) {
-      return res.status(404).json({ success: false, message: "Vehicle not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Vehicle not found" });
     }
 
     if (existingVehicle.createdBy.toString() !== req.user.id) {
@@ -119,10 +121,9 @@ const updateVehicleById = async (req, res, next) => {
     if (req.file) {
       const newImagePath = `/uploads/vehicles/${req.file.filename}`;
       vehicleData.imageUrl = newImagePath;
-      vehicleData.image = newImagePath;
 
       // Clean up old image file on disk
-      const oldImage = existingVehicle.imageUrl || existingVehicle.image;
+      const oldImage = existingVehicle.imageUrl;
       if (oldImage) deleteOldImage(oldImage);
     }
 
@@ -144,13 +145,17 @@ const deleteVehicleById = async (req, res, next) => {
     const { id } = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ success: false, message: "Invalid vehicle ID format" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid vehicle ID format" });
     }
 
     const existingVehicle = await getVehicleById(id);
 
     if (!existingVehicle) {
-      return res.status(404).json({ success: false, message: "Vehicle not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Vehicle not found" });
     }
 
     if (existingVehicle.createdBy.toString() !== req.user.id) {
@@ -161,7 +166,7 @@ const deleteVehicleById = async (req, res, next) => {
     }
 
     // Delete image from disk before removing from DB
-    const oldImage = existingVehicle.imageUrl || existingVehicle.image;
+    const oldImage = existingVehicle.imageUrl;
     if (oldImage) deleteOldImage(oldImage);
 
     await deleteVehicle(id);
@@ -182,7 +187,9 @@ const purchaseVehicleById = async (req, res, next) => {
     const { buyerName, buyerPhone, buyerEmail, buyerAddress } = req.body;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ success: false, message: "Invalid vehicle ID format" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid vehicle ID format" });
     }
 
     if (!buyerName || !buyerPhone || !buyerEmail || !buyerAddress) {
@@ -195,7 +202,10 @@ const purchaseVehicleById = async (req, res, next) => {
     const vehicle = await purchaseVehicle(id);
 
     if (!vehicle) {
-      return res.status(400).json({ success: false, message: "Vehicle is out of stock or not found" });
+      return res.status(400).json({
+        success: false,
+        message: "Vehicle is out of stock or not found",
+      });
     }
 
     const booking = await createBooking({
@@ -226,7 +236,9 @@ const restockVehicleById = async (req, res, next) => {
     const { quantity } = req.body;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ success: false, message: "Invalid vehicle ID format" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid vehicle ID format" });
     }
 
     if (!quantity || isNaN(quantity) || Number(quantity) <= 0) {
@@ -239,7 +251,9 @@ const restockVehicleById = async (req, res, next) => {
     const existingVehicle = await getVehicleById(id);
 
     if (!existingVehicle) {
-      return res.status(404).json({ success: false, message: "Vehicle not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Vehicle not found" });
     }
 
     if (existingVehicle.createdBy.toString() !== req.user.id) {
