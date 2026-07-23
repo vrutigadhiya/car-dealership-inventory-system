@@ -3,7 +3,9 @@ const { createBooking } = require("../services/bookingService");
 
 const {
   createVehicle,
+  getVehicleById,
   getAllVehicles,
+  getVehiclesByAdmin,
   searchVehicles,
   updateVehicle,
   deleteVehicle,
@@ -14,7 +16,7 @@ const {
 // Add Vehicle
 const addVehicle = async (req, res, next) => {
   try {
-    const vehicleData = { ...req.body };
+    const vehicleData = { ...req.body, createdBy: req.user.id };
 
     if (req.file) {
       vehicleData.imageUrl = `/uploads/vehicles/${req.file.filename}`;
@@ -32,31 +34,7 @@ const addVehicle = async (req, res, next) => {
   }
 };
 
-const updateVehicleById = async (req, res, next) => {
-  try {
-    const vehicleData = { ...req.body };
-
-    if (req.file) {
-      vehicleData.imageUrl = `/uploads/vehicles/${req.file.filename}`;
-    }
-
-    const vehicle = await updateVehicle(req.params.id, vehicleData);
-
-    if (!vehicle) {
-      return res.status(404).json({ success: false, message: "Vehicle not found" });
-    }
-
-    res.status(200).json({
-      success: true,
-      message: "Vehicle updated successfully",
-      vehicle,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-// Get All Vehicles
+// Get All Vehicles (customer-facing, sees everything)
 const getVehicles = async (req, res, next) => {
   try {
     const vehicles = await getAllVehicles();
@@ -70,6 +48,21 @@ const getVehicles = async (req, res, next) => {
   }
 };
 
+// Get Vehicles Added By The Logged-In Admin Only
+const getMyVehicles = async (req, res, next) => {
+  try {
+    const vehicles = await getVehiclesByAdmin(req.user.id, req.query);
+
+    res.status(200).json({
+      success: true,
+      vehicles,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Search Vehicles (customer-facing, across all vehicles)
 const searchVehicle = async (req, res, next) => {
   try {
     const vehicles = await searchVehicles(req.query);
@@ -83,19 +76,69 @@ const searchVehicle = async (req, res, next) => {
   }
 };
 
-// Delete Vehicle
+// Update Vehicle — only the admin who created it may edit
+const updateVehicleById = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ success: false, message: "Invalid vehicle ID format" });
+    }
+
+    const existingVehicle = await getVehicleById(id);
+
+    if (!existingVehicle) {
+      return res.status(404).json({ success: false, message: "Vehicle not found" });
+    }
+
+    if (existingVehicle.createdBy.toString() !== req.user.id) {
+      return res.status(403).json({
+        success: false,
+        message: "You can only edit vehicles you added",
+      });
+    }
+
+    const vehicleData = { ...req.body };
+
+    if (req.file) {
+      vehicleData.imageUrl = `/uploads/vehicles/${req.file.filename}`;
+    }
+
+    const vehicle = await updateVehicle(id, vehicleData);
+
+    res.status(200).json({
+      success: true,
+      message: "Vehicle updated successfully",
+      vehicle,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Delete Vehicle — only the admin who created it may delete
 const deleteVehicleById = async (req, res, next) => {
   try {
     const { id } = req.params;
 
-    const vehicle = await deleteVehicle(id);
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ success: false, message: "Invalid vehicle ID format" });
+    }
 
-    if (!vehicle) {
-      return res.status(404).json({
+    const existingVehicle = await getVehicleById(id);
+
+    if (!existingVehicle) {
+      return res.status(404).json({ success: false, message: "Vehicle not found" });
+    }
+
+    if (existingVehicle.createdBy.toString() !== req.user.id) {
+      return res.status(403).json({
         success: false,
-        message: "Vehicle not found",
+        message: "You can only delete vehicles you added",
       });
     }
+
+    await deleteVehicle(id);
 
     return res.status(200).json({
       success: true,
@@ -123,11 +166,10 @@ const purchaseVehicleById = async (req, res, next) => {
       });
     }
 
-    // purchaseVehicle (service) handles the stock check + decrement + save
     const vehicle = await purchaseVehicle(id);
 
     if (!vehicle) {
-      return res.status(404).json({ success: false, message: "Vehicle not found" });
+      return res.status(400).json({ success: false, message: "Vehicle is out of stock or not found" });
     }
 
     const booking = await createBooking({
@@ -151,19 +193,37 @@ const purchaseVehicleById = async (req, res, next) => {
   }
 };
 
-// Restock Vehicle
+// Restock Vehicle — only the admin who created it may restock
 const restockVehicleById = async (req, res, next) => {
   try {
+    const { id } = req.params;
     const { quantity } = req.body;
 
-    const vehicle = await restockVehicle(req.params.id, Number(quantity));
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ success: false, message: "Invalid vehicle ID format" });
+    }
 
-    if (!vehicle) {
-      return res.status(404).json({
+    if (!quantity || isNaN(quantity) || Number(quantity) <= 0) {
+      return res.status(400).json({
         success: false,
-        message: "Vehicle not found",
+        message: "Quantity must be a positive number",
       });
     }
+
+    const existingVehicle = await getVehicleById(id);
+
+    if (!existingVehicle) {
+      return res.status(404).json({ success: false, message: "Vehicle not found" });
+    }
+
+    if (existingVehicle.createdBy.toString() !== req.user.id) {
+      return res.status(403).json({
+        success: false,
+        message: "You can only restock vehicles you added",
+      });
+    }
+
+    const vehicle = await restockVehicle(id, Number(quantity));
 
     return res.status(200).json({
       success: true,
@@ -178,6 +238,7 @@ const restockVehicleById = async (req, res, next) => {
 module.exports = {
   addVehicle,
   getVehicles,
+  getMyVehicles,
   searchVehicle,
   updateVehicleById,
   deleteVehicleById,
