@@ -1,15 +1,15 @@
 const express = require("express");
-
 const router = express.Router();
 
 const { registerUser, loginUser } = require("../controllers/authController");
 
-const validateRegister = require("../middleware/validateRegister");
+// Import both validation arrays from the single validators file
+const { validateRegister, validateLogin } = require("../middleware/validators");
 
 // Register route
 router.post("/register", validateRegister, registerUser);
 
 // Login route
-router.post("/login", loginUser);
+router.post("/login", validateLogin, loginUser);
 
 module.exports = router;
