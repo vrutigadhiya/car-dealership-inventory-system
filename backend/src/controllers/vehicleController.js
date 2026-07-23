@@ -16,9 +16,14 @@ const {
 } = require("../services/vehicleService");
 
 // Helper to remove orphaned file if update/delete happens
+const { UPLOADS_DIR } = require("../config/paths");
+
 const deleteOldImage = (imagePath) => {
   if (!imagePath || imagePath.startsWith("http")) return;
-  const fullPath = path.resolve(__dirname, "..", imagePath.replace(/^\//, ""));
+  // imagePath looks like "/uploads/vehicles/xyz.png" - strip the leading
+  // "/uploads/" since UPLOADS_DIR already points at that folder.
+  const relativePath = imagePath.replace(/^\/?uploads\//, "");
+  const fullPath = path.join(UPLOADS_DIR, relativePath);
   if (fs.existsSync(fullPath)) {
     fs.unlink(fullPath, (err) => {
       if (err) console.error("Error deleting old image:", err);
