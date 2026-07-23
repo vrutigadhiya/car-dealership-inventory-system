@@ -25,6 +25,9 @@ const buildVehicleFilter = (query) => {
     }
   }
 
+  // Always exclude soft-deleted vehicles from normal listings/searches
+  filter.isDeleted = { $ne: true };
+
   return filter;
 };
 

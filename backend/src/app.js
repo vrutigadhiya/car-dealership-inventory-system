@@ -12,17 +12,6 @@ const errorHandler = require("./middleware/errorHandler");
 
 const app = express();
 
-const fs = require("fs");
-
-app.get("/check-upload", (req, res) => {
-  const dir = path.resolve(__dirname, "uploads/vehicles");
-
-  res.json({
-    exists: fs.existsSync(dir),
-    files: fs.existsSync(dir) ? fs.readdirSync(dir) : [],
-  });
-});
-
 const allowedOrigins = [
   "http://localhost:5173",
   "https://car-dealership-inventory-system-plum.vercel.app",
