@@ -67,7 +67,15 @@ export default function AdminBookings() {
       {loading ? (
         <CarLoader message="Loading bookings..." />
       ) : bookings.length === 0 ? (
-        <p className="text-steel">No bookings yet.</p>
+        <div className="rounded-2xl border border-ink/10 bg-white p-8 text-center shadow-sm">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-ink/5 text-3xl text-ink">
+            📬
+          </div>
+          <h2 className="font-display text-xl uppercase mb-2">No bookings yet</h2>
+          <p className="text-steel max-w-md mx-auto">
+            You don't have any confirmed bookings yet. When a customer books a vehicle, the details will show up here.
+          </p>
+        </div>
       ) : (
         <>
           {/* Desktop Table */}

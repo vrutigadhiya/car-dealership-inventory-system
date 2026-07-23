@@ -103,7 +103,21 @@ export default function AdminDashboard() {
       {loading ? (
         <CarLoader message="Loading inventory..." />
       ) : vehicles.length === 0 ? (
-        <p className="text-steel mt-6">You haven't added any vehicles yet.</p>
+        <div className="mt-10 flex flex-col items-center text-center text-steel">
+          <div className="w-40 h-40 flex items-center justify-center bg-amber/10 rounded-full mb-6">
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-16 h-16 text-amber" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 10h18M7 10v8m10-8v8M5 6h14l1 4H4l1-4z" />
+            </svg>
+          </div>
+          <h2 className="text-2xl font-medium mb-2 text-ink">No vehicles yet</h2>
+          <p className="max-w-xl">Your inventory is empty. Add vehicles to start tracking stock, pricing, and details. You can add new vehicles individually or import them later.</p>
+          <button
+            onClick={openAddForm}
+            className="mt-6 bg-amber hover:bg-amber-dark text-ink font-semibold uppercase tracking-wide text-xs px-4 py-2.5 rounded-sm transition-colors"
+          >
+            + Add your first vehicle
+          </button>
+        </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
           {vehicles.map((vehicle) => (
