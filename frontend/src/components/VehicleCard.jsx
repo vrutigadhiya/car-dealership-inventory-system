@@ -8,7 +8,7 @@ import { formatIndianCurrency } from "../utils/formatCurrency";
 const getImageUrl = (imagePath) => {
   if (!imagePath) return null;
 
-  // External absolute URL
+  // External absolute URL (e.g. Cloudinary, AWS S3, or Unsplash)
   if (imagePath.startsWith("http://") || imagePath.startsWith("https://")) {
     return imagePath;
   }
