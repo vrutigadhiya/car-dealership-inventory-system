@@ -1,49 +1,112 @@
 import { useState } from 'react';
-const API_BASE = import.meta.env.VITE_API_BASE_URL?.replace("/api", "") || "http://localhost:5000";
 
-const empty = { make: '', model: '', category: '', price: '', quantity: '' };
+const API_BASE =
+  import.meta.env.VITE_API_BASE_URL?.replace('/api', '') ||
+  'http://localhost:5000';
+
+const empty = {
+  make: '',
+  model: '',
+  category: '',
+  price: '',
+  quantity: '',
+};
 
 export default function VehicleForm({ initial, onSubmit, onCancel }) {
-  const [form, setForm] = useState(initial ? { ...empty, ...initial } : empty);
+  const [form, setForm] = useState(
+    initial ? { ...empty, ...initial } : empty
+  );
+
   const [imageFile, setImageFile] = useState(null);
-  const [preview, setPreview] = useState(initial?.imageUrl ? `${API_BASE}${vehicle.imageUrl}` : null);
+
+  // ✅ FIXED: use initial.imageUrl instead of vehicle.imageUrl
+  const [preview, setPreview] = useState(
+    initial?.imageUrl
+      ? initial.imageUrl.startsWith('http')
+        ? initial.imageUrl
+        : `${API_BASE}${initial.imageUrl}`
+      : null
+  );
+
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
 
-  const update = (field) => (e) => setForm((prev) => ({ ...prev, [field]: e.target.value }));
+  const update = (field) => (e) => {
+    setForm((prev) => ({
+      ...prev,
+      [field]: e.target.value,
+    }));
+  };
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      setImageFile(file);
-      setPreview(URL.createObjectURL(file));
+
+    if (!file) return;
+
+    // Validate file type
+    const allowedTypes = [
+      'image/jpeg',
+      'image/jpg',
+      'image/png',
+      'image/webp',
+    ];
+
+    if (!allowedTypes.includes(file.type)) {
+      setError('Only JPG, PNG and WEBP images are allowed.');
+      return;
     }
+
+    setError('');
+    setImageFile(file);
+    setPreview(URL.createObjectURL(file));
   };
 
   const submit = async (e) => {
     e.preventDefault();
     setError('');
 
-    if (!form.make || !form.model || !form.category || form.price === '' || form.quantity === '') {
+    if (
+      !form.make.trim() ||
+      !form.model.trim() ||
+      !form.category.trim() ||
+      form.price === '' ||
+      form.quantity === ''
+    ) {
       setError('Make, model, category, price and quantity are required.');
       return;
     }
 
+    if (Number(form.price) <= 0) {
+      setError('Price must be greater than 0.');
+      return;
+    }
+
+    if (Number(form.quantity) < 0) {
+      setError('Quantity cannot be negative.');
+      return;
+    }
+
     setSaving(true);
+
     try {
       const formData = new FormData();
-      formData.append('make', form.make);
-      formData.append('model', form.model);
-      formData.append('category', form.category);
+
+      formData.append('make', form.make.trim());
+      formData.append('model', form.model.trim());
+      formData.append('category', form.category.trim());
       formData.append('price', Number(form.price));
       formData.append('quantity', Number(form.quantity));
+
       if (imageFile) {
         formData.append('image', imageFile);
       }
 
       await onSubmit(formData);
     } catch (err) {
-      setError(err.response?.data?.message || 'Something went wrong. Please try again.');
+      setError(
+        err.response?.data?.message ||
+          'Something went wrong. Please try again.'
+      );
     } finally {
       setSaving(false);
     }
@@ -51,59 +114,126 @@ export default function VehicleForm({ initial, onSubmit, onCancel }) {
 
   return (
     <div className="fixed inset-0 bg-ink/60 flex items-center justify-center z-30 p-4">
-      <div className="bg-paper rounded-md shadow-xl w-full max-w-md p-6 border-t-4 border-amber">
+      <div className="bg-paper rounded-md shadow-xl w-full max-w-md p-6 border-t-4 border-amber max-h-[90vh] overflow-y-auto">
+        {/* Header */}
         <h2 className="font-display text-2xl uppercase mb-4">
-          {initial ? 'Update vehicle' : 'Add vehicle to lot'}
+          {initial ? 'Update Vehicle' : 'Add Vehicle to Lot'}
         </h2>
 
+        {/* Error */}
         {error && (
           <div className="bg-rust/10 border border-rust/30 text-rust text-sm rounded-sm px-3 py-2 mb-4">
             {error}
           </div>
         )}
 
-        <form onSubmit={submit} className="space-y-3">
+        <form onSubmit={submit} className="space-y-4">
+          {/* Vehicle Image */}
           <div className="rounded-sm">
             <label className="block text-[10px] uppercase tracking-wider text-steel mb-2 font-mono">
-              Vehicle photo
+              Vehicle Photo
             </label>
-            {preview && (
-              <img src={preview} alt="Preview" className="w-full h-36 object-cover rounded-sm mb-3 border border-ink/10 shadow-sm" />
+
+            {preview ? (
+              <img
+                src={preview}
+                alt="Vehicle Preview"
+                className="w-full h-40 object-cover rounded-sm mb-3 border border-ink/10 shadow-sm"
+              />
+            ) : (
+              <div className="w-full h-40 rounded-sm border border-dashed border-ink/20 bg-ink/5 flex items-center justify-center text-sm text-steel mb-3">
+                No image selected
+              </div>
             )}
+
             <label className="flex items-center justify-between gap-3 rounded-sm border border-dashed border-ink/30 bg-paper px-3 py-2 text-sm text-steel cursor-pointer transition hover:border-amber hover:text-ink">
-              <span>{imageFile ? imageFile.name : 'Choose an image'}</span>
-              <span className="text-[10px] uppercase tracking-widest font-mono text-ink/70">Browse</span>
+              <span className="truncate">
+                {imageFile ? imageFile.name : 'Choose an image'}
+              </span>
+
+              <span className="text-[10px] uppercase tracking-widest font-mono text-ink/70 whitespace-nowrap">
+                Browse
+              </span>
+
               <input
                 type="file"
-                accept="image/jpeg,image/png,image/webp"
+                accept="image/jpeg,image/jpg,image/png,image/webp"
                 onChange={handleImageChange}
                 className="sr-only"
               />
             </label>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
-            <Field label="Make" value={form.make} onChange={update('make')} />
-            <Field label="Model" value={form.model} onChange={update('model')} />
-          </div>
-          <Field label="Category" value={form.category} onChange={update('category')} />
-          <div className="grid grid-cols-2 gap-3">
-            <Field label="Price (₹)" type="number" value={form.price} onChange={update('price')} />
-            <Field label="Quantity" type="number" value={form.quantity} onChange={update('quantity')} />
+          {/* Make + Model */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <Field
+              label="Make"
+              value={form.make}
+              onChange={update('make')}
+            />
+
+            <Field
+              label="Model"
+              value={form.model}
+              onChange={update('model')}
+            />
           </div>
 
-          <div className="flex gap-2 pt-2">
+          {/* Category */}
+          <div>
+            <label className="block text-[10px] uppercase tracking-wider text-steel mb-1 font-mono">
+              Category
+            </label>
+
+            <select
+              value={form.category}
+              onChange={update('category')}
+              className="w-full border border-ink/15 rounded-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber bg-white"
+            >
+              <option value="">Select category</option>
+              <option value="SUV">SUV</option>
+              <option value="Sedan">Sedan</option>
+              <option value="Hatchback">Hatchback</option>
+              <option value="EV">EV</option>
+            </select>
+          </div>
+
+          {/* Price + Quantity */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <Field
+              label="Price (₹)"
+              type="number"
+              value={form.price}
+              onChange={update('price')}
+            />
+
+            <Field
+              label="Quantity"
+              type="number"
+              value={form.quantity}
+              onChange={update('quantity')}
+            />
+          </div>
+
+          {/* Buttons */}
+          <div className="flex flex-col sm:flex-row gap-2 pt-2">
             <button
               type="submit"
               disabled={saving}
-              className="flex-1 bg-amber hover:bg-amber-dark text-ink font-semibold uppercase tracking-wide text-xs py-2.5 rounded-sm transition-colors disabled:opacity-60"
+              className="flex-1 bg-amber hover:bg-amber-dark text-ink font-semibold uppercase tracking-wide text-xs py-2.5 rounded-sm transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              {saving ? 'Saving…' : initial ? 'Save changes' : 'Add vehicle'}
+              {saving
+                ? 'Saving...'
+                : initial
+                ? 'Save Changes'
+                : 'Add Vehicle'}
             </button>
+
             <button
               type="button"
               onClick={onCancel}
-              className="flex-1 border border-ink/20 text-ink uppercase tracking-wide text-xs py-2.5 rounded-sm hover:border-ink transition-colors"
+              disabled={saving}
+              className="flex-1 border border-ink/20 text-ink uppercase tracking-wide text-xs py-2.5 rounded-sm hover:border-ink transition-colors disabled:opacity-60"
             >
               Cancel
             </button>
@@ -117,11 +247,16 @@ export default function VehicleForm({ initial, onSubmit, onCancel }) {
 function Field({ label, value, onChange, type = 'text' }) {
   return (
     <div>
-      <label className="block text-[10px] uppercase tracking-wider text-steel mb-1 font-mono">{label}</label>
+      <label className="block text-[10px] uppercase tracking-wider text-steel mb-1 font-mono">
+        {label}
+      </label>
+
       <input
         type={type}
         value={value}
         onChange={onChange}
+        required
+        min={type === 'number' ? 0 : undefined}
         className="w-full border border-ink/15 rounded-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber"
       />
     </div>
