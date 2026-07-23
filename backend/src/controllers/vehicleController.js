@@ -28,9 +28,10 @@ const deleteOldImage = (imagePath) => {
   }
 };
 
-
 // ================= ADD VEHICLE =================
 const addVehicle = async (req, res, next) => {
+  console.log("BODY:", req.body);
+  console.log("FILE:", req.file);
   try {
     const vehicleData = { ...req.body, createdBy: req.user.id };
 
