@@ -9,6 +9,7 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import MyBookings from "./pages/MyBookings";
 import AdminBookings from "./pages/AdminBookings";
+import NotFound from "./pages/NotFound";
 
 function App() {
   return (
@@ -61,9 +62,11 @@ function App() {
         />
 
         {/* Invalid URL */}
-        <Route path="*" element={<Navigate to="/login" replace />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
       <Footer />
+
+      
     </div>
   );
 }

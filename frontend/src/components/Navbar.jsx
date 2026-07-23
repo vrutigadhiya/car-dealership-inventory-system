@@ -278,31 +278,6 @@ export default function Navbar() {
                   </NavLink>
                 )}
 
-                <div
-                  className="
-                  text-paper/80
-                  px-3
-                  text-sm
-                "
-                >
-                  {user.name}
-
-                  {isAdmin && (
-                    <span
-                      className="
-                      ml-2
-                      bg-amber
-                      text-ink
-                      px-2
-                      py-1
-                      text-[10px]
-                    "
-                    >
-                      ADMIN
-                    </span>
-                  )}
-                </div>
-
                 <button
                   onClick={handleLogout}
                   className="
