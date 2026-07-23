@@ -19,19 +19,12 @@ const allowedOrigins = [
 
 const corsOptions = {
   origin: (origin, callback) => {
-    console.log("Incoming Origin:", origin);
-
-    // Allow Postman, mobile apps, etc.
-    if (!origin) {
+    // Allow requests with no origin (e.g. Postman, mobile apps, cURL)
+    if (!origin || allowedOrigins.includes(origin)) {
       return callback(null, true);
     }
 
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    }
-
-    console.log("Blocked Origin:", origin);
-
+    console.log("Blocked Origin by CORS:", origin);
     return callback(new Error("Not allowed by CORS"));
   },
   credentials: true,
@@ -39,17 +32,14 @@ const corsOptions = {
   allowedHeaders: ["Content-Type", "Authorization"],
 };
 
+// Enable CORS middleware (handles all HTTP OPTIONS preflight requests automatically)
 app.use(cors(corsOptions));
 
-// Handle preflight requests
-app.options("/{*splat}", cors(corsOptions));
-
+// Body Parser Middleware
 app.use(express.json());
 
-app.use(
-  "/uploads",
-  express.static(path.join(__dirname, "../uploads"))
-);
+// Serve static upload files directly from the local project uploads folder
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Test Route
 app.get("/test-cors", (req, res) => {
@@ -59,7 +49,7 @@ app.get("/test-cors", (req, res) => {
   });
 });
 
-// Routes
+// API Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/vehicles", vehicleRoutes);
 app.use("/api/bookings", bookingRoutes);
@@ -69,7 +59,7 @@ app.get("/", (req, res) => {
   res.send("API Running...");
 });
 
-// Error Handler (always last)
+// Global Error Handler (Must be registered last)
 app.use(errorHandler);
 
 module.exports = app;
