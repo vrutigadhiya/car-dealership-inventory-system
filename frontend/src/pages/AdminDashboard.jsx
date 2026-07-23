@@ -44,43 +44,65 @@ export default function AdminDashboard() {
     setShowForm(true);
   };
 
+  // Fix: previously this discarded the response from POST/PUT and relied
+  // entirely on a second network round-trip (fetchVehicles()) to reflect
+  // the change. If that refetch failed or was slow (e.g. a Render cold
+  // start right after the save), the vehicle list would silently stay
+  // stale even though the save itself had already succeeded - looking
+  // exactly like "added, then disappeared". Now we update state directly
+  // from the same response that already confirmed success.
   const handleFormSubmit = async (formData) => {
     try {
       if (editingVehicle) {
-        await api.put(`/vehicles/${editingVehicle._id}`, formData);
+        const res = await api.put(`/vehicles/${editingVehicle._id}`, formData);
+        const updated = res.data.vehicle;
+        setVehicles((prev) =>
+          prev.map((v) => (v._id === updated._id ? updated : v))
+        );
         showToast("Vehicle updated successfully");
       } else {
-        await api.post("/vehicles", formData);
+        const res = await api.post("/vehicles", formData);
+        const created = res.data.vehicle;
+        setVehicles((prev) => [created, ...prev]);
         showToast("Vehicle added to inventory");
       }
       setShowForm(false);
-      fetchVehicles();
     } catch (err) {
       showToast(err.response?.data?.message || "Save failed.", "error");
       throw err;
     }
   };
 
+  // Fix: same issue as above - now removes the vehicle from local state
+  // directly instead of trusting a second fetchVehicles() call to reflect
+  // the deletion.
   const handleDeleteConfirmed = async () => {
     try {
       await api.delete(`/vehicles/${confirmingDelete._id}`);
+      setVehicles((prev) => prev.filter((v) => v._id !== confirmingDelete._id));
       showToast(`${confirmingDelete.make} ${confirmingDelete.model} deleted`);
       setConfirmingDelete(null);
-      fetchVehicles();
     } catch (err) {
       showToast(err.response?.data?.message || "Delete failed.", "error");
       setConfirmingDelete(null);
     }
   };
 
+  // Fix: same issue - update the specific vehicle from the response
+  // instead of refetching the whole list.
   const handleRestockSubmit = async (amount) => {
     try {
-      await api.post(`/vehicles/${restockingVehicle._id}/restock`, {
+      const res = await api.post(`/vehicles/${restockingVehicle._id}/restock`, {
         quantity: amount,
       });
-      showToast(`Added ${amount} to ${restockingVehicle.make} ${restockingVehicle.model}`);
+      const updated = res.data.vehicle;
+      setVehicles((prev) =>
+        prev.map((v) => (v._id === updated._id ? updated : v))
+      );
+      showToast(
+        `Added ${amount} to ${restockingVehicle.make} ${restockingVehicle.model}`
+      );
       setRestockingVehicle(null);
-      fetchVehicles();
     } catch (err) {
       showToast(err.response?.data?.message || "Restock failed.", "error");
     }
