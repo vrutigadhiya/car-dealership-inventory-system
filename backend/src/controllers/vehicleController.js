@@ -18,7 +18,7 @@ const {
 // Helper to remove orphaned file if update/delete happens
 const deleteOldImage = (imagePath) => {
   if (!imagePath || imagePath.startsWith("http")) return;
-  const fullPath = path.join(__dirname, "..", imagePath);
+  const fullPath = path.resolve(__dirname, "..", imagePath.replace(/^\//, ""));
   if (fs.existsSync(fullPath)) {
     fs.unlink(fullPath, (err) => {
       if (err) console.error("Error deleting old image:", err);

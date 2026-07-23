@@ -14,7 +14,7 @@ const startServer = async () => {
       console.log(`Server running on port ${PORT}`);
     });
 
-    // Handle unhandled promise rejections (e.g., lost DB connection after boot)
+    // Handle unhandled promise rejections safely
     process.on("unhandledRejection", (err) => {
       console.error(`Unhandled Rejection Error: ${err.message}`);
       server.close(() => process.exit(1));

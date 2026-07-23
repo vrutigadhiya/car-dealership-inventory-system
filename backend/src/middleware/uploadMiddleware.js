@@ -2,8 +2,10 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 
-// Ensure the directory exists so Multer never throws an ENOENT error
-const uploadDir = path.join(__dirname, "../uploads/vehicles");
+// Absolute path to uploads/vehicles directory
+const uploadDir = path.resolve(__dirname, "../uploads/vehicles");
+
+// Ensure the target folder exists on disk before Multer tries to write to it
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
@@ -36,7 +38,7 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({
   storage,
   fileFilter,
-  limits: { fileSize: 5 * 1024 * 1024 },
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB limit
 });
 
 module.exports = upload;
