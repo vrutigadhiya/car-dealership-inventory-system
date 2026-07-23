@@ -28,7 +28,13 @@ const validateLogin = [
     .withMessage("Email is required")
     .isEmail()
     .withMessage("Enter a valid email address")
-    .normalizeEmail(),
+    .normalizeEmail()
+    .custom(async (email) => {
+      const existingUser = await User.findOne({ email });
+      if (!existingUser) {
+        throw new Error("User not available");
+      }
+    }),
 
   body("password")
     .notEmpty()
