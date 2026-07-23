@@ -149,6 +149,13 @@ Profile
 - Mobile optimized navigation
 - Professional dashboard layouts
 
+### ☁️ Cloudinary Image Storage
+
+- Vehicle images are uploaded and stored securely using **Cloudinary**.
+- Permanent cloud-hosted image URLs ensure images remain available after server restarts or redeployments.
+- Temporary files created during upload are automatically removed after a successful Cloudinary upload.
+- Supports **PNG, JPG, JPEG, WEBP, and AVIF** image formats.
+
 
 ---
 
@@ -391,6 +398,9 @@ PORT=5000
 MONGO_URI=mongodb://localhost:27017/car-dealership
 JWT_SECRET=your_super_secret_jwt_key
 JWT_EXPIRES_IN=1h
+CLOUDINARY_CLOUD_NAME=your_cloufinary_cloud_name
+CLOUDINARY_API_KEY=your_cloudnary_api_key
+CLOUDINARY_API_SECRET=your_cloundinary_api_secret
 ```
 
 Launch the backend development server:
