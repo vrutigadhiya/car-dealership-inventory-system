@@ -1,18 +1,16 @@
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
-
-// Absolute path to uploads/vehicles directory
-const uploadDir = path.resolve(__dirname, "../uploads/vehicles");
+const { VEHICLES_UPLOAD_DIR } = require("../config/paths");
 
 // Ensure the target folder exists on disk before Multer tries to write to it
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
+if (!fs.existsSync(VEHICLES_UPLOAD_DIR)) {
+  fs.mkdirSync(VEHICLES_UPLOAD_DIR, { recursive: true });
 }
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, uploadDir);
+    cb(null, VEHICLES_UPLOAD_DIR);
   },
   filename: (req, file, cb) => {
     const uniqueName = `${Date.now()}-${Math.round(Math.random() * 1e9)}${path.extname(file.originalname)}`;

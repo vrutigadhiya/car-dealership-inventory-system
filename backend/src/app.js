@@ -39,8 +39,8 @@ app.use(cors(corsOptions));
 app.use(express.json());
 
 // Serve static upload files directly from the absolute uploads directory
-const uploadsPath = path.resolve(__dirname, "uploads");
-app.use("/uploads", express.static(uploadsPath));
+const { UPLOADS_DIR } = require("./config/paths");
+app.use("/uploads", express.static(UPLOADS_DIR));
 
 // Test Route
 app.get("/test-cors", (req, res) => {
