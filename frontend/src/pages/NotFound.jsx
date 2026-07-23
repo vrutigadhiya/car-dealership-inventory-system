@@ -43,7 +43,7 @@ export default function NotFound() {
           {/* Always show Home/Login button */}
           <Link
             to={token ? "/" : "/login"}
-            className="inline-flex items-center justify-center gap-2 rounded-sm bg-amber px-6 py-3 font-semibold uppercase tracking-wide text-ink transition-all duration-300 hover:-translate-y-1 hover:bg-amber-dark hover:shadow-lg"
+            className="inline-flex items-center justify-center gap-2 rounded-sm bg-amber px-6 py-3 font-semibold uppercase tracking-wide text-ink transition-all duration-300 hover:-translate-y-1 hover:bg-amber-dark hover:shadow-lg cursor-pointer"
           >
             <House size={18} />
             {token ? "Back Home" : "Go to Login"}
@@ -53,7 +53,7 @@ export default function NotFound() {
           {token && (
             <button
               onClick={() => window.history.back()}
-              className="inline-flex items-center justify-center gap-2 rounded-sm border border-ink/20 px-6 py-3 font-semibold uppercase tracking-wide text-ink transition-all duration-300 hover:-translate-y-1 hover:border-ink hover:bg-white"
+              className="inline-flex items-center justify-center gap-2 rounded-sm border border-ink/20 px-6 py-3 font-semibold uppercase tracking-wide text-ink transition-all duration-300 hover:-translate-y-1 hover:border-ink hover:bg-white cursor-pointer"
             >
               <ArrowLeft size={18} />
               Go Back

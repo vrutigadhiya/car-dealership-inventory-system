@@ -80,14 +80,14 @@ export default function SearchBar({ onSearch, onReset }) {
       <div className="flex gap-2 mt-3">
         <button
           type="submit"
-          className="bg-ink text-paper text-xs uppercase tracking-wide font-semibold px-4 py-2 rounded-sm hover:bg-ink-light transition-colors"
+          className="bg-ink text-paper text-xs uppercase tracking-wide font-semibold px-4 py-2 rounded-sm hover:bg-ink-light transition-colors cursor-pointer"
         >
           Search
         </button>
         <button
           type="button"
           onClick={reset}
-          className="border border-ink/20 text-ink text-xs uppercase tracking-wide font-semibold px-4 py-2 rounded-sm hover:border-ink transition-colors"
+          className="border border-ink/20 text-ink text-xs uppercase tracking-wide font-semibold px-4 py-2 rounded-sm hover:border-ink transition-colors cursor-pointer"
         >
           Reset
         </button>

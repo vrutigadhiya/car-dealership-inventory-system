@@ -106,7 +106,7 @@ export default function PurchaseForm({ vehicle, onSubmit, onCancel }) {
             <button
               type="submit"
               disabled={saving}
-              className="flex-1 bg-amber hover:bg-amber-dark text-ink font-semibold uppercase tracking-wide text-xs py-2.5 rounded-sm transition-colors disabled:opacity-60"
+              className="flex-1 bg-amber hover:bg-amber-dark text-ink font-semibold uppercase tracking-wide text-xs py-2.5 rounded-sm transition-colors disabled:opacity-60 cursor-pointer disabled:cursor-not-allowed"
             >
               {saving ? "Booking..." : "Confirm Purchase"}
             </button>
@@ -115,7 +115,7 @@ export default function PurchaseForm({ vehicle, onSubmit, onCancel }) {
               type="button"
               onClick={onCancel}
               disabled={saving}
-              className="flex-1 border border-ink/20 text-ink uppercase tracking-wide text-xs py-2.5 rounded-sm hover:border-ink transition-colors"
+              className="flex-1 border border-ink/20 text-ink uppercase tracking-wide text-xs py-2.5 rounded-sm hover:border-ink transition-colors cursor-pointer disabled:cursor-not-allowed"
             >
               Cancel
             </button>

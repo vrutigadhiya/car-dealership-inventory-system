@@ -120,7 +120,7 @@ export default function AdminBookings() {
                 {bookings.map((booking) => (
                   <tr key={booking._id} className="border-t border-ink/10">
                     <td className="px-4 py-3">
-                      {booking.vehicle?.make} {booking.vehicle?.model}
+                      {booking.vehicle ? `${booking.vehicle.make} ${booking.vehicle.model}` : "Deleted Vehicle"}
                     </td>
 
                     <td className="px-4 py-3">{booking.buyerName}</td>
@@ -199,7 +199,7 @@ export default function AdminBookings() {
                   uppercase
                 "
                   >
-                    {booking.vehicle?.make} {booking.vehicle?.model}
+                    {booking.vehicle ? `${booking.vehicle.make} ${booking.vehicle.model}` : "Deleted Vehicle"}
                   </h2>
 
                   <span

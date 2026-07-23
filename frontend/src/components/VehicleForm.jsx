@@ -19,13 +19,17 @@ export default function VehicleForm({ initial, onSubmit, onCancel }) {
 
   const [imageFile, setImageFile] = useState(null);
 
-  const [preview, setPreview] = useState(
-    initial?.imageUrl
-      ? initial.imageUrl.startsWith('http')
-        ? initial.imageUrl
-        : `${API_BASE}${initial.imageUrl}`
-      : null
-  );
+  const initialImageUrl = initial?.imageUrl || initial?.image;
+  const getPreviewUrl = (path) => {
+    if (!path) return null;
+    if (path.startsWith('http://') || path.startsWith('https://')) {
+      return path;
+    }
+    const cleanPath = path.startsWith('/') ? path : `/${path}`;
+    return `${API_BASE}${cleanPath}`;
+  };
+
+  const [preview, setPreview] = useState(getPreviewUrl(initialImageUrl));
 
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
@@ -199,7 +203,7 @@ export default function VehicleForm({ initial, onSubmit, onCancel }) {
             <button
               type="submit"
               disabled={saving}
-              className="flex-1 bg-amber hover:bg-amber-dark text-ink font-semibold uppercase tracking-wide text-xs py-2.5 rounded-sm transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+              className="flex-1 bg-amber hover:bg-amber-dark text-ink font-semibold uppercase tracking-wide text-xs py-2.5 rounded-sm transition-colors disabled:opacity-60 cursor-pointer disabled:cursor-not-allowed"
             >
               {saving
                 ? 'Saving...'
@@ -212,7 +216,7 @@ export default function VehicleForm({ initial, onSubmit, onCancel }) {
               type="button"
               onClick={onCancel}
               disabled={saving}
-              className="flex-1 border border-ink/20 text-ink uppercase tracking-wide text-xs py-2.5 rounded-sm hover:border-ink transition-colors disabled:opacity-60"
+              className="flex-1 border border-ink/20 text-ink uppercase tracking-wide text-xs py-2.5 rounded-sm hover:border-ink transition-colors disabled:opacity-60 cursor-pointer disabled:cursor-not-allowed"
             >
               Cancel
             </button>

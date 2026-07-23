@@ -118,7 +118,7 @@ export default function Navbar() {
 
                 <button
                   onClick={handleLogout}
-                  className="border border-paper/30 hover:border-amber hover:text-amber px-3 py-1.5 rounded-sm uppercase text-xs font-semibold transition"
+                  className="border border-paper/30 hover:border-amber hover:text-amber px-3 py-1.5 rounded-sm uppercase text-xs font-semibold transition cursor-pointer"
                 >
                   Log Out
                 </button>
@@ -129,7 +129,7 @@ export default function Navbar() {
           {/* Mobile Button */}
           <button
             onClick={() => setMenuOpen(!menuOpen)}
-            className={`md:hidden ${
+            className={`md:hidden cursor-pointer ${
               user
                 ? "w-10 h-10 rounded-full bg-amber text-ink font-bold flex items-center justify-center"
                 : "text-amber text-2xl"
@@ -196,7 +196,7 @@ export default function Navbar() {
 
                 <button
                   onClick={handleLogout}
-                  className="border border-paper/30 hover:border-amber hover:text-amber px-3 py-2 rounded-sm text-xs uppercase font-semibold w-fit transition"
+                  className="border border-paper/30 hover:border-amber hover:text-amber px-3 py-2 rounded-sm text-xs uppercase font-semibold w-fit transition cursor-pointer"
                 >
                   Log Out
                 </button>
