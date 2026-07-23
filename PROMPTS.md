@@ -361,6 +361,31 @@ Implemented:
 
 > "Create a professional GitHub README with badges, live demo, screenshots, API documentation, setup guide, dependencies, mobile responsiveness, and AI usage."
 
+---
+
+# ☁️ Session 10: Cloudinary Image Storage Integration
+
+## Prompt 10.1: Persistent Cloud Image Storage
+
+### User Prompt
+
+> Replace local image storage with Cloudinary so uploaded vehicle images remain available after Render redeployments. Configure Cloudinary, upload images from Multer, store secure URLs in MongoDB, remove temporary files after upload, and update the frontend to support Cloudinary image URLs while maintaining compatibility with existing local image paths.
+
+### AI Contribution
+
+Implemented:
+
+- Cloudinary account integration
+- Cloudinary SDK configuration
+- Environment variable configuration
+- Secure image uploads to Cloudinary
+- Automatic temporary file cleanup
+- Permanent Cloudinary image URLs stored in MongoDB
+- Frontend support for Cloudinary and local image paths
+- Deployment configuration for Render environment variables
+
+---
+
 ### AI Contribution
 
 Produced:
@@ -446,6 +471,7 @@ Optimizations include:
 | Supertest | ✅ |
 | Debugging | ✅ |
 | Documentation | ✅ |
+| Cloudinary Integration | ✅ |
 
 ---
 
@@ -471,5 +497,8 @@ The final application includes:
 - TDD-based Backend
 - Production Deployment on Render & Vercel
 - Comprehensive Documentation
+- Cloudinary Image Storage
+- Permanent Cloud-hosted Vehicle Images
+- Automatic Temporary File Cleanup
 
 ---
