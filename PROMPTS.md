@@ -353,11 +353,9 @@ Implemented:
 ---
 
 
----
+# 📄 Session 9: Documentation
 
-# 📄 Session 10: Documentation
-
-## Prompt 10.1: Professional README
+## Prompt 9.1: Professional README
 
 **User Prompt**
 
@@ -380,6 +378,23 @@ Produced:
 - Attractive formatting
 
 ---
+
+# ⚡ Website Performance Optimization & Testing
+
+## 🚀 Google PageSpeed Insights Testing
+
+The deployed **Ironclad Motors - Car Dealership Inventory Management System** was tested using **Google PageSpeed Insights** to evaluate website speed, performance, accessibility, SEO, and best practices.
+
+Performance testing tool:
+
+🔗 https://pagespeed.web.dev/
+
+
+---
+
+## 📊 Performance Score
+
+🚀 **Performance Score: 95%**
 
 # 📱 Mobile Responsiveness
 
