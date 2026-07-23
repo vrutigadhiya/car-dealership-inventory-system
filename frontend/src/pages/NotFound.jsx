@@ -1,7 +1,10 @@
 import { Link } from "react-router-dom";
 import { CarFront, TriangleAlert, ArrowLeft, House } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
 
 export default function NotFound() {
+  const { token } = useAuth(); // or const { user } = useAuth();
+
   return (
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-paper px-6">
       {/* Background decoration */}
@@ -14,7 +17,6 @@ export default function NotFound() {
       </div>
 
       <div className="relative z-10 max-w-xl text-center">
-        {/* Car Icon */}
         <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-amber text-ink shadow-xl shadow-amber/30">
           <CarFront size={52} strokeWidth={2.2} />
         </div>
@@ -38,24 +40,27 @@ export default function NotFound() {
         </p>
 
         <div className="mt-10 flex flex-col justify-center gap-4 sm:flex-row">
+          {/* Always show Home/Login button */}
           <Link
-            to="/"
+            to={token ? "/" : "/login"}
             className="inline-flex items-center justify-center gap-2 rounded-sm bg-amber px-6 py-3 font-semibold uppercase tracking-wide text-ink transition-all duration-300 hover:-translate-y-1 hover:bg-amber-dark hover:shadow-lg"
           >
             <House size={18} />
-            Back Home
+            {token ? "Back Home" : "Go to Login"}
           </Link>
 
-          <button
-            onClick={() => window.history.back()}
-            className="inline-flex items-center justify-center gap-2 rounded-sm border border-ink/20 px-6 py-3 font-semibold uppercase tracking-wide text-ink transition-all duration-300 hover:-translate-y-1 hover:border-ink hover:bg-white"
-          >
-            <ArrowLeft size={18} />
-            Go Back
-          </button>
+          {/* Show Go Back only for logged-in users */}
+          {token && (
+            <button
+              onClick={() => window.history.back()}
+              className="inline-flex items-center justify-center gap-2 rounded-sm border border-ink/20 px-6 py-3 font-semibold uppercase tracking-wide text-ink transition-all duration-300 hover:-translate-y-1 hover:border-ink hover:bg-white"
+            >
+              <ArrowLeft size={18} />
+              Go Back
+            </button>
+          )}
         </div>
 
-        {/* Decorative Car */}
         <div className="mt-14 flex items-center justify-center">
           <CarFront
             size={90}
