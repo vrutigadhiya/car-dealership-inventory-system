@@ -15,7 +15,7 @@ const getVehicleById = async (id) => {
 
 // Get All Vehicles
 const getAllVehicles = async () => {
-  return await Vehicle.find();
+  return await Vehicle.find({ isDeleted: { $ne: true } });
 };
 
 // Get Vehicles Added By A Specific Admin (with optional search filters)
@@ -38,17 +38,17 @@ const updateVehicle = async (id, vehicleData) => {
     runValidators: true,
   };
 
-  return Vehicle.findByIdAndUpdate(id, vehicleData, options);
+  return Vehicle.findOneAndUpdate({ _id: id, isDeleted: { $ne: true } }, vehicleData, options);
 };
 
-// Delete Vehicle
+// Delete Vehicle (Soft Delete)
 const deleteVehicle = async (id) => {
-  return await Vehicle.findByIdAndDelete(id);
+  return await Vehicle.findByIdAndUpdate(id, { isDeleted: true }, { new: true });
 };
 
 // Purchase Vehicle
 const purchaseVehicle = async (id) => {
-  const vehicle = await Vehicle.findById(id);
+  const vehicle = await Vehicle.findOne({ _id: id, isDeleted: { $ne: true } });
 
   if (!vehicle) {
     return null;
@@ -65,7 +65,7 @@ const purchaseVehicle = async (id) => {
 
 // Restock Vehicle
 const restockVehicle = async (id, quantity) => {
-  const vehicle = await Vehicle.findById(id);
+  const vehicle = await Vehicle.findOne({ _id: id, isDeleted: { $ne: true } });
   if (!vehicle) {
     return null;
   }

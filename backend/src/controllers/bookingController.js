@@ -1,4 +1,4 @@
-const { getBookingsByUser, getAllBookings } = require("../services/bookingService");
+const { getBookingsByUser, getBookingsByAdmin } = require("../services/bookingService");
 
 // GET /api/bookings/my — customer's own bookings
 const getMyBookings = async (req, res, next) => {
@@ -17,7 +17,7 @@ const getMyBookings = async (req, res, next) => {
 // GET /api/bookings — admin, all bookings across all customers
 const getAllBookingsHandler = async (req, res, next) => {
   try {
-    const bookings = await getAllBookings();
+    const bookings = await getBookingsByAdmin(req.user.id);
 
     res.status(200).json({
       success: true,

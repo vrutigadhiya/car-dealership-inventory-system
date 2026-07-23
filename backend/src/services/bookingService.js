@@ -1,4 +1,5 @@
 const Booking = require("../models/Booking");
+const Vehicle = require("../models/Vehicle");
 
 const createBooking = async (data) => {
   return await Booking.create(data);
@@ -10,6 +11,14 @@ const getBookingsByUser = async (userId) => {
     .sort({ createdAt: -1 });
 };
 
+const getBookingsByAdmin = async (adminId) => {
+  const adminVehicleIds = await Vehicle.find({ createdBy: adminId }).distinct("_id");
+  return await Booking.find({ vehicle: { $in: adminVehicleIds } })
+    .populate("vehicle", "make model category imageUrl")
+    .populate("user", "name email")
+    .sort({ createdAt: -1 });
+};
+
 const getAllBookings = async () => {
   return await Booking.find({})
     .populate("vehicle", "make model category imageUrl")
@@ -17,4 +26,4 @@ const getAllBookings = async () => {
     .sort({ createdAt: -1 });
 };
 
-module.exports = { createBooking, getBookingsByUser, getAllBookings };
+module.exports = { createBooking, getBookingsByUser, getBookingsByAdmin, getAllBookings };

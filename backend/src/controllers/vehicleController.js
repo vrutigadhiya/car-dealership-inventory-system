@@ -15,23 +15,19 @@ const {
   restockVehicle,
 } = require("../services/vehicleService");
 
-// Delete image from disk
+// Helper to remove orphaned file if update/delete happens
 const deleteOldImage = (imagePath) => {
   if (!imagePath || imagePath.startsWith("http")) return;
-
   const fullPath = path.resolve(__dirname, "..", imagePath.replace(/^\//, ""));
-
   if (fs.existsSync(fullPath)) {
     fs.unlink(fullPath, (err) => {
-      if (err) console.error("Error deleting image:", err);
+      if (err) console.error("Error deleting old image:", err);
     });
   }
 };
 
 // ================= ADD VEHICLE =================
 const addVehicle = async (req, res, next) => {
-  console.log("BODY:", req.body);
-  console.log("FILE:", req.file);
   try {
     const vehicleData = { ...req.body, createdBy: req.user.id };
 
@@ -168,10 +164,6 @@ const deleteVehicleById = async (req, res, next) => {
         message: "You can only delete vehicles you added",
       });
     }
-
-    // Delete image from disk before removing from DB
-    const oldImage = existingVehicle.imageUrl;
-    if (oldImage) deleteOldImage(oldImage);
 
     await deleteVehicle(id);
 
