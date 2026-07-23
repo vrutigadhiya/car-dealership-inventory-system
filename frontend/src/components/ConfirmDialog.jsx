@@ -8,13 +8,13 @@ export default function ConfirmDialog({ title, message, onConfirm, onCancel }) {
         <div className="flex gap-2">
           <button
             onClick={onConfirm}
-            className="flex-1 bg-rust hover:bg-rust/90 text-paper font-semibold uppercase tracking-wide text-xs py-2.5 rounded-sm transition-colors"
+            className="flex-1 bg-rust hover:bg-rust/90 text-paper font-semibold uppercase tracking-wide text-xs py-2.5 rounded-sm transition-colors cursor-pointer"
           >
             Confirm
           </button>
           <button
             onClick={onCancel}
-            className="flex-1 border border-ink/20 text-ink uppercase tracking-wide text-xs py-2.5 rounded-sm hover:border-ink transition-colors"
+            className="flex-1 border border-ink/20 text-ink uppercase tracking-wide text-xs py-2.5 rounded-sm hover:border-ink transition-colors cursor-pointer"
           >
             Cancel
           </button>

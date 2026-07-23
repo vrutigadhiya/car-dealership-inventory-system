@@ -21,7 +21,7 @@ export default function BookingConfirmation({ booking, vehicle, onClose }) {
 
         <button
           onClick={onClose}
-          className="w-full bg-ink hover:bg-ink-light text-paper font-semibold uppercase tracking-wide text-xs py-2.5 rounded-sm transition-colors"
+          className="w-full bg-ink hover:bg-ink-light text-paper font-semibold uppercase tracking-wide text-xs py-2.5 rounded-sm transition-colors cursor-pointer"
         >
           Done
         </button>

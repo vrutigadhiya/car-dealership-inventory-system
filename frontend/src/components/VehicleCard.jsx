@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import StockGauge from "./StockGauge";
 import { formatIndianCurrency } from "../utils/formatCurrency";
 
@@ -36,6 +36,10 @@ export default function VehicleCard({
   // Normalize image prop name (supports both vehicle.imageUrl or vehicle.image)
   const rawImagePath = vehicle.imageUrl || vehicle.image;
   const fullImageUrl = getImageUrl(rawImagePath);
+
+  useEffect(() => {
+    setImgError(false);
+  }, [fullImageUrl]);
 
   return (
     <div className="bg-white rounded-md shadow-sm border border-ink/10 overflow-hidden flex flex-col hover:shadow-md transition-shadow">
@@ -88,7 +92,7 @@ export default function VehicleCard({
             <button
               onClick={() => onPurchase(vehicle._id)}
               disabled={(vehicle.quantity ?? vehicle.stock) === 0 || busy}
-              className="w-full bg-amber hover:bg-amber-dark disabled:bg-paper-dim disabled:text-steel/50 disabled:cursor-not-allowed text-ink font-semibold uppercase tracking-wide text-xs py-2.5 rounded-sm transition-colors"
+              className="w-full bg-amber hover:bg-amber-dark disabled:bg-paper-dim disabled:text-steel/50 disabled:cursor-not-allowed text-ink font-semibold uppercase tracking-wide text-xs py-2.5 rounded-sm transition-colors cursor-pointer"
             >
               {(vehicle.quantity ?? vehicle.stock) === 0
                 ? "Sold out"
@@ -102,19 +106,19 @@ export default function VehicleCard({
             <div className="flex gap-2 text-xs">
               <button
                 onClick={() => onEdit(vehicle)}
-                className="flex-1 border border-ink/20 hover:border-ink text-ink py-1.5 rounded-sm uppercase tracking-wide font-medium transition-colors"
+                className="flex-1 border border-ink/20 hover:border-ink text-ink py-1.5 rounded-sm uppercase tracking-wide font-medium transition-colors cursor-pointer"
               >
                 Edit
               </button>
               <button
                 onClick={() => onRestock(vehicle._id)}
-                className="flex-1 border border-moss/40 text-moss hover:border-moss py-1.5 rounded-sm uppercase tracking-wide font-medium transition-colors"
+                className="flex-1 border border-moss/40 text-moss hover:border-moss py-1.5 rounded-sm uppercase tracking-wide font-medium transition-colors cursor-pointer"
               >
                 Restock
               </button>
               <button
                 onClick={() => onDelete(vehicle._id)}
-                className="flex-1 border border-rust/40 text-rust hover:border-rust py-1.5 rounded-sm uppercase tracking-wide font-medium transition-colors"
+                className="flex-1 border border-rust/40 text-rust hover:border-rust py-1.5 rounded-sm uppercase tracking-wide font-medium transition-colors cursor-pointer"
               >
                 Delete
               </button>

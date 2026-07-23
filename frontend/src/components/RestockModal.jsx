@@ -55,14 +55,14 @@ export default function RestockModal({ vehicle, onSubmit, onCancel }) {
             <button
               type="submit"
               disabled={saving}
-              className="flex-1 bg-moss hover:bg-moss/90 text-paper font-semibold uppercase tracking-wide text-xs py-2.5 rounded-sm transition-colors disabled:opacity-60"
+              className="flex-1 bg-moss hover:bg-moss/90 text-paper font-semibold uppercase tracking-wide text-xs py-2.5 rounded-sm transition-colors disabled:opacity-60 cursor-pointer disabled:cursor-not-allowed"
             >
               {saving ? "Restocking…" : "Confirm Restock"}
             </button>
             <button
               type="button"
               onClick={onCancel}
-              className="flex-1 border border-ink/20 text-ink uppercase tracking-wide text-xs py-2.5 rounded-sm hover:border-ink transition-colors"
+              className="flex-1 border border-ink/20 text-ink uppercase tracking-wide text-xs py-2.5 rounded-sm hover:border-ink transition-colors cursor-pointer"
             >
               Cancel
             </button>
