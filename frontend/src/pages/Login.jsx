@@ -13,7 +13,7 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // Field validation rules matching backend
+  // Field validation rules matching basic client check
   const validateField = (name, value) => {
     if (name === "email") {
       if (!value.trim()) return "Email is required";
@@ -29,10 +29,13 @@ export default function LoginPage() {
   const handleChange = (field) => (e) => {
     const value = e.target.value;
     setForm((prev) => ({ ...prev, [field]: value }));
-    
-    // Clear field-specific error as user types
+
+    // Clear field-specific and general errors as user types
     if (fieldErrors[field]) {
       setFieldErrors((prev) => ({ ...prev, [field]: "" }));
+    }
+    if (generalError) {
+      setGeneralError("");
     }
   };
 
@@ -61,19 +64,21 @@ export default function LoginPage() {
 
     try {
       const user = await login(form.email, form.password);
-      if (user.role === "admin") {
+      if (user?.role === "admin") {
         navigate("/admin");
       } else {
         navigate("/dashboard");
       }
     } catch (err) {
-      const responseData = err.response?.data;
+      const responseData = err.response?.data || err;
 
-      // Handle express-validator array response
+      // Handle express-validator mapped array response ({ field, message })
       if (responseData?.errors && Array.isArray(responseData.errors)) {
         const backendErrors = {};
         responseData.errors.forEach((e) => {
-          if (e.path) backendErrors[e.path] = e.msg;
+          const fieldName = e.field || e.path;
+          const msg = e.message || e.msg;
+          if (fieldName) backendErrors[fieldName] = msg;
         });
         setFieldErrors(backendErrors);
       } else {
