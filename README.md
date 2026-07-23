@@ -157,17 +157,17 @@ Profile
 
 ## Login Page
 
-<img src="./frontend/src/assets/login.png" width="800">
+<img src="./screenshots/login.png" width="800">
 
 
 ## User Dashboard
 
-<img src="./frontend/src/assets/userDash.png" width="800">
+<img src="./screenshots/userDash.png" width="800">
 
 
 ## Admin Dashboard
 
-<img src="./frontend/src/assets/adminDashboard.png" width="800">
+<img src="./screenshots/adminDashboard.png" width="800">
 
 
 ## Mobile View
@@ -441,21 +441,48 @@ Implemented using:
 - Role Based Authorization
 
 
-Roles:
+# 👥 Role-Based Access Control
 
-```
-User
- |
- |-- Browse vehicles
- |-- Purchase vehicle
- |-- View bookings
+The Car Dealership Inventory Management System uses **Role-Based Access Control (RBAC)** to provide different permissions for **Users** and **Administrators**.
 
+---
 
-Admin
- |
- |-- Manage inventory
- |-- Manage bookings
-```
+## 👤 User Permissions
+
+Users can:
+
+* 🔍 Browse available vehicles
+* 🚗 View vehicle details
+* 🛒 Purchase available vehicles
+* 📦 View booking history
+* 👤 Manage their profile
+
+Users cannot:
+
+* ❌ Add vehicles
+* ❌ Edit vehicle details
+* ❌ Delete vehicles
+* ❌ Restock inventory
+* ❌ Access the admin dashboard
+
+---
+
+## 🛠️ Administrator Permissions
+
+Administrators can:
+
+* ➕ Add new vehicles with images and specifications
+* ✏️ Edit vehicle details
+* 🗑️ Delete vehicles
+* 📦 Restock vehicle inventory
+* 📊 Access the admin dashboard
+* 📋 Manage vehicle inventory
+
+---
+
+🔐 Administrator Authority
+
+Each vehicle is associated with the administrator who created it. This ensures that every administrator is responsible only for their own vehicle listings. Administrators can edit, delete, and restock only the vehicles they have added, while vehicles added by other administrators remain not viewable and cannot be managed by them.
 
 
 ## 🧪 Testing Suite (TDD)
