@@ -1,9 +1,16 @@
 const multer = require("multer");
 const path = require("path");
+const fs = require("fs");
+
+// Ensure the directory exists so Multer never throws an ENOENT error
+const uploadDir = path.join(__dirname, "../uploads/vehicles");
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "uploads/vehicles");
+    cb(null, uploadDir);
   },
   filename: (req, file, cb) => {
     const uniqueName = `${Date.now()}-${Math.round(Math.random() * 1e9)}${path.extname(file.originalname)}`;
@@ -16,7 +23,6 @@ const allowedExtensions = [".png", ".jpg", ".jpeg", ".webp", ".avif"];
 
 const fileFilter = (req, file, cb) => {
   const ext = path.extname(file.originalname).toLowerCase();
-
   const isValidMime = allowedMimeTypes.includes(file.mimetype);
   const isValidExt = allowedExtensions.includes(ext);
 
