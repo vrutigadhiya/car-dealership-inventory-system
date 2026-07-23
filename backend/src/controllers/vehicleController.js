@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+const path = require("path");
+const fs = require("fs");
 const { createBooking } = require("../services/bookingService");
 
 const {
@@ -13,13 +15,27 @@ const {
   restockVehicle,
 } = require("../services/vehicleService");
 
-// Add Vehicle
+// Helper to remove orphaned file if update/delete happens
+const deleteOldImage = (imagePath) => {
+  if (!imagePath || imagePath.startsWith("http")) return;
+  const fullPath = path.join(__dirname, "..", imagePath);
+  if (fs.existsSync(fullPath)) {
+    fs.unlink(fullPath, (err) => {
+      if (err) console.error("Error deleting old image:", err);
+    });
+  }
+};
+
+// ================= ADD VEHICLE =================
 const addVehicle = async (req, res, next) => {
   try {
     const vehicleData = { ...req.body, createdBy: req.user.id };
 
     if (req.file) {
-      vehicleData.imageUrl = `/uploads/vehicles/${req.file.filename}`;
+      const imagePath = `/uploads/vehicles/${req.file.filename}`;
+      // Populate both keys to prevent Mongoose schema field name mismatches
+      vehicleData.imageUrl = imagePath;
+      vehicleData.image = imagePath;
     }
 
     const vehicle = await createVehicle(vehicleData);
@@ -34,7 +50,7 @@ const addVehicle = async (req, res, next) => {
   }
 };
 
-// Get All Vehicles (customer-facing, sees everything)
+// ================= GET ALL VEHICLES =================
 const getVehicles = async (req, res, next) => {
   try {
     const vehicles = await getAllVehicles();
@@ -48,7 +64,7 @@ const getVehicles = async (req, res, next) => {
   }
 };
 
-// Get Vehicles Added By The Logged-In Admin Only
+// ================= GET MY VEHICLES =================
 const getMyVehicles = async (req, res, next) => {
   try {
     const vehicles = await getVehiclesByAdmin(req.user.id, req.query);
@@ -62,7 +78,7 @@ const getMyVehicles = async (req, res, next) => {
   }
 };
 
-// Search Vehicles (customer-facing, across all vehicles)
+// ================= SEARCH VEHICLES =================
 const searchVehicle = async (req, res, next) => {
   try {
     const vehicles = await searchVehicles(req.query);
@@ -76,7 +92,7 @@ const searchVehicle = async (req, res, next) => {
   }
 };
 
-// Update Vehicle — only the admin who created it may edit
+// ================= UPDATE VEHICLE =================
 const updateVehicleById = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -101,7 +117,13 @@ const updateVehicleById = async (req, res, next) => {
     const vehicleData = { ...req.body };
 
     if (req.file) {
-      vehicleData.imageUrl = `/uploads/vehicles/${req.file.filename}`;
+      const newImagePath = `/uploads/vehicles/${req.file.filename}`;
+      vehicleData.imageUrl = newImagePath;
+      vehicleData.image = newImagePath;
+
+      // Clean up old image file on disk
+      const oldImage = existingVehicle.imageUrl || existingVehicle.image;
+      if (oldImage) deleteOldImage(oldImage);
     }
 
     const vehicle = await updateVehicle(id, vehicleData);
@@ -116,7 +138,7 @@ const updateVehicleById = async (req, res, next) => {
   }
 };
 
-// Delete Vehicle — only the admin who created it may delete
+// ================= DELETE VEHICLE =================
 const deleteVehicleById = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -138,6 +160,10 @@ const deleteVehicleById = async (req, res, next) => {
       });
     }
 
+    // Delete image from disk before removing from DB
+    const oldImage = existingVehicle.imageUrl || existingVehicle.image;
+    if (oldImage) deleteOldImage(oldImage);
+
     await deleteVehicle(id);
 
     return res.status(200).json({
@@ -149,7 +175,7 @@ const deleteVehicleById = async (req, res, next) => {
   }
 };
 
-// Purchase Vehicle (books it, decrements stock, saves buyer details)
+// ================= PURCHASE VEHICLE =================
 const purchaseVehicleById = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -193,7 +219,7 @@ const purchaseVehicleById = async (req, res, next) => {
   }
 };
 
-// Restock Vehicle — only the admin who created it may restock
+// ================= RESTOCK VEHICLE =================
 const restockVehicleById = async (req, res, next) => {
   try {
     const { id } = req.params;
