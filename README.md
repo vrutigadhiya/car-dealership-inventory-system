@@ -516,24 +516,6 @@ Coverage outputs will be generated directly inside `backend/coverage/`.
 
 ---
 
-## 🧪 Testing Suite (TDD)
-
-This project strictly adheres to **Test-Driven Development (TDD)** principles following the **Red-Green-Refactor** cycle. Core API integration tests cover happy paths, authorization guards, data validation errors, and database edge cases.
-
-```bash
-cd backend
-
-# Execute all test suites
-npm test
-
-# Run Jest in watch mode during development
-npx jest --watch
-
-# Generate code coverage reports
-npx jest --coverage
-
----
-
 # 🚀 Future Improvements
 
 
