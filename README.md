@@ -516,30 +516,21 @@ Coverage outputs will be generated directly inside `backend/coverage/`.
 
 ---
 
-## 🤖 AI Pairing & Methodology
+## 🧪 Testing Suite (TDD)
 
-### Copilot & AI Collaboration
-This system was developed using **Claude (Anthropic)** acting as an automated pair programmer. 
+This project strictly adheres to **Test-Driven Development (TDD)** principles following the **Red-Green-Refactor** cycle. Core API integration tests cover happy paths, authorization guards, data validation errors, and database edge cases.
 
-#### TDD Workflow Execution
-1. 🔴 **Red Phase:** Asked Claude to write exhaustive, intentionally failing integration tests covering edge cases (*out-of-stock purchases, invalid ObjectIDs, non-admin access blocks*) before writing production logic.
-2. 🟢 **Green Phase:** Wrote minimal backend code required to satisfy all Jest test suites.
-3. 🔁 **Refactor Phase:** Used AI feedback to clean code into a clean, decoupled Controller-Service pattern and introduce global exception-handling middleware.
+```bash
+cd backend
 
-#### Commit Hygiene Example
-Commits engineered through collaborative AI pairing include standard trailing metadata:
+# Execute all test suites
+npm test
 
-```text
-test: add vehicle purchase endpoint tests (red-green-refactor)
+# Run Jest in watch mode during development
+npx jest --watch
 
-Used an AI assistant to draft the test suite covering successful
-purchase, out-of-stock rejection, and invalid vehicle ID handling.
-
-Co-authored-by: ChatGPT Claude <noreply@anthropic.com>
-```
-
-#### Reflection
-Using AI as an intelligent TDD pair-programmer dramatically reduced boilerplate generation and edge-case oversight. Architectural decisions, system validation, state management choices, and final code verifications remained strictly human-driven.
+# Generate code coverage reports
+npx jest --coverage
 
 ---
 
@@ -551,6 +542,5 @@ Using AI as an intelligent TDD pair-programmer dramatically reduced boilerplate 
 - Customer reviews
 - Advanced analytics dashboard
 - AI based vehicle recommendation
-- Cloud image storage
 - Push notifications
 - Confirmation Email
